@@ -1,0 +1,66 @@
+USE LoadTrackerDB;
+GO
+
+INSERT INTO dbo.LoadTracker
+(
+    DETAIL_LINE_ID,
+    BILL_NUMBER,
+    [BOL #],
+    [ORDER #],
+    DESTINATION,
+    DESTNAME,
+    DESTCITY,
+    DESTPROV,
+    CUSTOMER,
+    CALLNAME,
+    ORIGIN,
+    ORIGNAME,
+    ORIGCITY,
+    ORIGPROV,
+    PICK_UP_BY,
+    PICK_UP_BY_END,
+    DELIVER_BY,
+    DELIVER_BY_END,
+    CURRENT_STATUS,
+    PALLETS,
+    CUBE,
+    CUBE_UNITS,
+    WEIGHT,
+    WEIGHT_UNITS,
+    TEMPERATURE,
+    TEMPERATURE_UNITS,
+    DANGEROUS_GOODS,
+    REQUESTED_EQUIPMEN
+)
+VALUES
+(
+    5440,
+    'C00003255.1',
+    '904802549',
+    '2701834489',
+    '17135',
+    'LOBLAW COMPANY LTD REGINA, SK, 2101',
+    'PENSE',
+    'SK',
+    '185',
+    'MONDELEZ CANADA INC.',
+    '7555',
+    'BRAMPTON ON',
+    'BRAMPTON',
+    'ON',
+    '2022-02-22 00:01:00',
+    '2022-02-22 23:59:00',
+    '2024-02-04 00:00:00',
+    '2024-02-04 00:00:00',
+    'DOCKED',
+    2,
+    0,
+    'FT3',
+    589,
+    'LB',
+    55,
+    'F',
+    'False',
+    'RLT'
+);
+GO
