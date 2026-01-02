@@ -1,0 +1,14 @@
+2026-01-02 14:13:18.687 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-02 14:13:18.688 -05:00 [INF] Tick "2026-01-02T14:13:18.6819551"
+2026-01-02 14:13:18.717 -05:00 [INF] Hosting environment: Development
+2026-01-02 14:13:18.719 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-02 14:13:19.836 -05:00 [INF] Done. Rows=244 Updated=0 Inserted=244
+2026-01-02 14:13:19.839 -05:00 [INF] Next run "2026-01-02T14:15:00.0000000" (delay "00:01:41.3180449")
+2026-01-02 14:13:44.300 -05:00 [INF] Application is shutting down...
+2026-01-02 14:23:52.611 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-02 14:23:52.613 -05:00 [INF] Tick "2026-01-02T14:23:52.6059056"
+2026-01-02 14:23:52.641 -05:00 [INF] Hosting environment: Development
+2026-01-02 14:23:52.643 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-02 14:23:53.091 -05:00 [INF] Done. Rows=2 Updated=2 Inserted=0
+2026-01-02 14:23:53.094 -05:00 [INF] Next run "2026-01-02T14:30:00.0000000" (delay "00:06:07.3940944")
+2026-01-02 14:25:34.359 -05:00 [INF] Application is shutting down...

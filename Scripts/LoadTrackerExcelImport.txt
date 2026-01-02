@@ -12,7 +12,7 @@ dotnet add package Cronos
 dotnet add package Serilog.Extensions.Hosting
 dotnet add package Serilog.Sinks.File
 dotnet add package Microsoft.Data.SqlClient
-
+dotnet add package Microsoft.Extensions.Hosting.WindowsServices
 
 mkdir Models
 mkdir Services
