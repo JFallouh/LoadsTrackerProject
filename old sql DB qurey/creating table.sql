@@ -38,3 +38,44 @@ CREATE TABLE dbo.LoadTracker (
     REQUESTED_EQUIPMEN     VARCHAR(20)     NULL
 );
 GO
+
+
+
+USE LoadTrackerDB;
+GO
+
+ALTER TABLE dbo.LoadTracker
+ADD ACTUAL_DELIVERY DATETIME NULL;
+GO
+
+
+USE LoadTrackerDB;
+GO
+
+ALTER TABLE dbo.LoadTracker
+ADD
+   
+    COMMENTS           VARCHAR(300) NULL;
+GO
+
+USE LoadTrackerDB;
+GO
+
+IF COL_LENGTH('dbo.LoadTracker', 'COMMENTS') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD
+   
+    COMMENTS           VARCHAR(300) NULL;
+END
+GO
+
+
+USE LoadTrackerDB;
+GO
+IF COL_LENGTH('dbo.LoadTracker', 'SF_SHORT_DESC') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD [SF_SHORT_DESC] VARCHAR(2000) NULL;
+END
+GO

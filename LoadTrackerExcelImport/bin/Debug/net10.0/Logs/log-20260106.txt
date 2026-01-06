@@ -1,0 +1,33 @@
+2026-01-06 12:21:37.026 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-06 12:21:37.027 -05:00 [INF] Tick "2026-01-06T12:21:37.0201979"
+2026-01-06 12:21:37.058 -05:00 [INF] Hosting environment: Development
+2026-01-06 12:21:37.059 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-06 12:21:37.696 -05:00 [INF] Done. Rows=2 Updated=0 Inserted=2
+2026-01-06 12:21:37.699 -05:00 [INF] Next run "2026-01-06T12:30:00.0000000" (delay "00:08:22.9798021")
+2026-01-06 12:23:12.173 -05:00 [INF] Application is shutting down...
+2026-01-06 12:23:15.658 -05:00 [INF] Tick "2026-01-06T12:23:15.6513332"
+2026-01-06 12:23:15.657 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-06 12:23:15.699 -05:00 [INF] Hosting environment: Development
+2026-01-06 12:23:15.699 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-06 12:23:16.185 -05:00 [INF] Done. Rows=2 Updated=2 Inserted=0
+2026-01-06 12:23:16.188 -05:00 [INF] Next run "2026-01-06T12:30:00.0000000" (delay "00:06:44.3486668")
+2026-01-06 12:24:31.594 -05:00 [INF] Application is shutting down...
+2026-01-06 12:37:48.392 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-06 12:37:48.393 -05:00 [INF] Tick "2026-01-06T12:37:48.3852278"
+2026-01-06 12:37:48.431 -05:00 [INF] Hosting environment: Development
+2026-01-06 12:37:48.433 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-06 12:37:48.920 -05:00 [INF] Cleanup deleted 2 rows older than 6 months.
+2026-01-06 12:37:48.930 -05:00 [INF] Done. Rows=4 Updated=0 Inserted=2
+2026-01-06 12:37:48.933 -05:00 [INF] Next run "2026-01-06T12:45:00.0000000" (delay "00:07:11.6147722")
+2026-01-06 12:39:11.375 -05:00 [INF] Application is shutting down...
+2026-01-06 12:49:04.507 -05:00 [INF] Tick "2026-01-06T12:49:04.5004029"
+2026-01-06 12:49:04.507 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-06 12:49:04.541 -05:00 [INF] Hosting environment: Development
+2026-01-06 12:49:04.541 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-06 12:49:05.056 -05:00 [INF] Cleanup deleted 0 rows older than 6 months.
+2026-01-06 12:49:05.065 -05:00 [INF] Done. Rows=4 Updated=2 Inserted=2
+2026-01-06 12:49:05.068 -05:00 [INF] Next run "2026-01-06T12:56:00.0000000" (delay "00:06:55.4995971")
+2026-01-06 12:56:00.584 -05:00 [INF] Tick "2026-01-06T12:56:00.5844533"
+2026-01-06 12:56:00.585 -05:00 [INF] CSV unchanged ("2026-01-06T17:48:55.1183041Z"). Skipping.
+2026-01-06 12:56:00.585 -05:00 [INF] Next run "2026-01-06T13:00:00.0000000" (delay "00:03:59.4155467")
+2026-01-06 12:58:25.091 -05:00 [INF] Application is shutting down...

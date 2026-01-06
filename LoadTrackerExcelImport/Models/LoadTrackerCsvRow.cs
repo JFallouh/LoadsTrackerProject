@@ -27,6 +27,7 @@ public sealed class LoadTrackerCsvRow
     [Name("PICK_UP_BY_END")] public string? PICK_UP_BY_END { get; set; }
     [Name("DELIVER_BY")]     public string? DELIVER_BY { get; set; }
     [Name("DELIVER_BY_END")] public string? DELIVER_BY_END { get; set; }
+    [Name("ACTUAL_DELIVERY")] public string? ACTUAL_DELIVERY { get; set; }
 
     [Name("CURRENT_STATUS")] public string? CURRENT_STATUS { get; set; }
     [Name("PALLETS")]        public string? PALLETS { get; set; }
@@ -42,4 +43,5 @@ public sealed class LoadTrackerCsvRow
 
     // matches your SQL column typo: REQUESTED_EQUIPMEN
     [Name("REQUESTED_EQUIPMEN")] public string? REQUESTED_EQUIPMEN { get; set; }
+    [Name("SF_SHORT_DESC")] public string? SF_SHORT_DESC { get; set; }
 }

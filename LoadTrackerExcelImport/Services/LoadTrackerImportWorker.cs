@@ -14,7 +14,7 @@ public sealed class LoadTrackerImportWorker : BackgroundService
         _log = log;
         _importer = importer;
 
-        _cron = CronExpression.Parse(cfg["Importer:Cron"] ?? "*/15 * * * *");
+        _cron = CronExpression.Parse(cfg["Importer:Cron"] ?? "*/7 * * * *");
         _tz = TimeZoneInfo.FindSystemTimeZoneById(cfg["Importer:TimeZoneId"] ?? "Eastern Standard Time");
     }
 

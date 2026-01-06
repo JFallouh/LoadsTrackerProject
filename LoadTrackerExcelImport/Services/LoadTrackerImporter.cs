@@ -161,6 +161,7 @@ public sealed class LoadTrackerImporter
             row["PICK_UP_BY_END"] = DbDt(r.PICK_UP_BY_END);
             row["DELIVER_BY"] = DbDt(r.DELIVER_BY);
             row["DELIVER_BY_END"] = DbDt(r.DELIVER_BY_END);
+            row["ACTUAL_DELIVERY"] = DbDt(r.ACTUAL_DELIVERY);
 
             row["CURRENT_STATUS"] = DbStr(r.CURRENT_STATUS);
             row["PALLETS"] = DbDbl(r.PALLETS);
@@ -174,6 +175,7 @@ public sealed class LoadTrackerImporter
 
             row["DANGEROUS_GOODS"] = DbStr(r.DANGEROUS_GOODS);
             row["REQUESTED_EQUIPMEN"] = DbStr(r.REQUESTED_EQUIPMEN);
+            row["SF_SHORT_DESC"] = DbStr(r.SF_SHORT_DESC);
 
             table.Rows.Add(row);
         }
@@ -207,7 +209,7 @@ public sealed class LoadTrackerImporter
         t.Columns.Add("PICK_UP_BY_END", typeof(DateTime));
         t.Columns.Add("DELIVER_BY", typeof(DateTime));
         t.Columns.Add("DELIVER_BY_END", typeof(DateTime));
-
+        t.Columns.Add("ACTUAL_DELIVERY", typeof(DateTime));
         t.Columns.Add("CURRENT_STATUS", typeof(string));
         t.Columns.Add("PALLETS", typeof(double));
         t.Columns.Add("CUBE", typeof(double));
@@ -220,6 +222,7 @@ public sealed class LoadTrackerImporter
 
         t.Columns.Add("DANGEROUS_GOODS", typeof(string));
         t.Columns.Add("REQUESTED_EQUIPMEN", typeof(string));
+        t.Columns.Add("SF_SHORT_DESC", typeof(string));
 
         return t;
     }
@@ -266,7 +269,7 @@ CREATE TABLE #staging (
     PICK_UP_BY_END        DATETIME       NULL,
     DELIVER_BY            DATETIME       NULL,
     DELIVER_BY_END        DATETIME       NULL,
-
+    ACTUAL_DELIVERY        DATETIME       NULL,
     CURRENT_STATUS        VARCHAR(10)     NULL,
     PALLETS               FLOAT          NULL,
     CUBE                  FLOAT          NULL,
@@ -278,7 +281,8 @@ CREATE TABLE #staging (
     TEMPERATURE_UNITS     VARCHAR(5)      NULL,
 
     DANGEROUS_GOODS       CHAR(5)         NULL,
-    REQUESTED_EQUIPMEN    VARCHAR(20)     NULL
+    REQUESTED_EQUIPMEN    VARCHAR(20)     NULL,
+    SF_SHORT_DESC         VARCHAR(2000)   NULL
 );";
 
         await using (var cmd = new SqlCommand(createSql, conn, tx) { CommandTimeout = timeout })
@@ -317,6 +321,7 @@ SET
     t.PICK_UP_BY_END     = s.PICK_UP_BY_END,
     t.DELIVER_BY         = s.DELIVER_BY,
     t.DELIVER_BY_END     = s.DELIVER_BY_END,
+    t.ACTUAL_DELIVERY    = s.ACTUAL_DELIVERY,
     t.CURRENT_STATUS     = s.CURRENT_STATUS,
     t.PALLETS            = s.PALLETS,
     t.CUBE               = s.CUBE,
@@ -326,7 +331,8 @@ SET
     t.TEMPERATURE        = s.TEMPERATURE,
     t.TEMPERATURE_UNITS  = s.TEMPERATURE_UNITS,
     t.DANGEROUS_GOODS    = s.DANGEROUS_GOODS,
-    t.REQUESTED_EQUIPMEN = s.REQUESTED_EQUIPMEN
+    t.REQUESTED_EQUIPMEN = s.REQUESTED_EQUIPMEN,
+    t.SF_SHORT_DESC      = s.SF_SHORT_DESC
 FROM dbo.LoadTracker t
 JOIN #staging s ON s.DETAIL_LINE_ID = t.DETAIL_LINE_ID
 WHERE
@@ -347,6 +353,7 @@ WHERE
  OR ISNULL(t.PICK_UP_BY_END,'19000101') <> ISNULL(s.PICK_UP_BY_END,'19000101')
  OR ISNULL(t.DELIVER_BY,'19000101') <> ISNULL(s.DELIVER_BY,'19000101')
  OR ISNULL(t.DELIVER_BY_END,'19000101') <> ISNULL(s.DELIVER_BY_END,'19000101')
+ OR ISNULL(t.ACTUAL_DELIVERY,'19000101') <> ISNULL(s.ACTUAL_DELIVERY,'19000101')
  OR ISNULL(t.CURRENT_STATUS,'') <> ISNULL(s.CURRENT_STATUS,'')
  OR ISNULL(t.PALLETS,0) <> ISNULL(s.PALLETS,0)
  OR ISNULL(t.CUBE,0) <> ISNULL(s.CUBE,0)
@@ -356,7 +363,8 @@ WHERE
  OR ISNULL(t.TEMPERATURE,0) <> ISNULL(s.TEMPERATURE,0)
  OR ISNULL(t.TEMPERATURE_UNITS,'') <> ISNULL(s.TEMPERATURE_UNITS,'')
  OR ISNULL(t.DANGEROUS_GOODS,'') <> ISNULL(s.DANGEROUS_GOODS,'')
- OR ISNULL(t.REQUESTED_EQUIPMEN,'') <> ISNULL(s.REQUESTED_EQUIPMEN,'');";
+ OR ISNULL(t.REQUESTED_EQUIPMEN,'') <> ISNULL(s.REQUESTED_EQUIPMEN,'')
+OR ISNULL(t.SF_SHORT_DESC,'') <> ISNULL(s.SF_SHORT_DESC,'');";
 
         int updated;
         await using (var cmd = new SqlCommand(updateSql, conn, tx) { CommandTimeout = timeout })
@@ -369,20 +377,20 @@ INSERT INTO dbo.LoadTracker (
     DESTINATION, DESTNAME, DESTCITY, DESTPROV,
     CUSTOMER, CALLNAME,
     ORIGIN, ORIGNAME, ORIGCITY, ORIGPROV,
-    PICK_UP_BY, PICK_UP_BY_END, DELIVER_BY, DELIVER_BY_END,
+    PICK_UP_BY, PICK_UP_BY_END, DELIVER_BY, DELIVER_BY_END,ACTUAL_DELIVERY,
     CURRENT_STATUS, PALLETS, CUBE, WEIGHT,
     CUBE_UNITS, WEIGHT_UNITS, TEMPERATURE, TEMPERATURE_UNITS,
-    DANGEROUS_GOODS, REQUESTED_EQUIPMEN
+    DANGEROUS_GOODS, REQUESTED_EQUIPMEN, SF_SHORT_DESC
 )
 SELECT
     s.DETAIL_LINE_ID, s.BILL_NUMBER, s.[BOL #], s.[ORDER #],
     s.DESTINATION, s.DESTNAME, s.DESTCITY, s.DESTPROV,
     s.CUSTOMER, s.CALLNAME,
     s.ORIGIN, s.ORIGNAME, s.ORIGCITY, s.ORIGPROV,
-    s.PICK_UP_BY, s.PICK_UP_BY_END, s.DELIVER_BY, s.DELIVER_BY_END,
+    s.PICK_UP_BY, s.PICK_UP_BY_END, s.DELIVER_BY, s.DELIVER_BY_END,s.ACTUAL_DELIVERY,
     s.CURRENT_STATUS, s.PALLETS, s.CUBE, s.WEIGHT,
     s.CUBE_UNITS, s.WEIGHT_UNITS, s.TEMPERATURE, s.TEMPERATURE_UNITS,
-    s.DANGEROUS_GOODS, s.REQUESTED_EQUIPMEN
+    s.DANGEROUS_GOODS, s.REQUESTED_EQUIPMEN, s.SF_SHORT_DESC
 FROM #staging s
 LEFT JOIN dbo.LoadTracker t ON t.DETAIL_LINE_ID = s.DETAIL_LINE_ID
 WHERE t.DETAIL_LINE_ID IS NULL;";
@@ -391,6 +399,27 @@ WHERE t.DETAIL_LINE_ID IS NULL;";
         await using (var cmd = new SqlCommand(insertSql, conn, tx) { CommandTimeout = timeout })
             inserted = await cmd.ExecuteNonQueryAsync(ct);
 
+        // cleanup old rows (older than 6 months)
+        var deleteSql = @"
+        DELETE FROM dbo.LoadTracker
+        WHERE
+         (
+                PICK_UP_BY IS NOT NULL
+            AND PICK_UP_BY < DATEADD(MONTH, -6, GETDATE())
+            )
+            OR
+            (
+                PICK_UP_BY IS NULL
+                AND DELIVER_BY IS NOT NULL
+                AND DELIVER_BY < DATEADD(MONTH, -6, GETDATE())
+                );";
+
+        int deleted;
+        await using (var cmd = new SqlCommand(deleteSql, conn, tx) { CommandTimeout = timeout })
+            deleted = await cmd.ExecuteNonQueryAsync(ct);
+
+        _log.LogInformation("Cleanup deleted {Deleted} rows older than 6 months.", deleted);
+        //end of cleanup
         await tx.CommitAsync(ct);
         return (updated, inserted);
     }
