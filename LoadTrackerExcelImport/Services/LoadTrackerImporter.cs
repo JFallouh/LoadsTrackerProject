@@ -143,7 +143,7 @@ public sealed class LoadTrackerImporter
             row["BILL_NUMBER"] = DbStr(r.BILL_NUMBER);
             row["BOL #"] = DbStr(r.BOL_NO);
             row["ORDER #"] = DbStr(r.ORDER_NO);
-
+            row["PO #"] = DbStr(r.PO_NO);
             row["DESTINATION"] = DbStr(r.DESTINATION);
             row["DESTNAME"] = DbStr(r.DESTNAME);
             row["DESTCITY"] = DbStr(r.DESTCITY);
@@ -162,6 +162,7 @@ public sealed class LoadTrackerImporter
             row["DELIVER_BY"] = DbDt(r.DELIVER_BY);
             row["DELIVER_BY_END"] = DbDt(r.DELIVER_BY_END);
             row["ACTUAL_DELIVERY"] = DbDt(r.ACTUAL_DELIVERY);
+            row["ACTUAL_PICKUP"] = DbDt(r.ACTUAL_PICKUP);
 
             row["CURRENT_STATUS"] = DbStr(r.CURRENT_STATUS);
             row["PALLETS"] = DbDbl(r.PALLETS);
@@ -176,6 +177,7 @@ public sealed class LoadTrackerImporter
             row["DANGEROUS_GOODS"] = DbStr(r.DANGEROUS_GOODS);
             row["REQUESTED_EQUIPMEN"] = DbStr(r.REQUESTED_EQUIPMEN);
             row["SF_SHORT_DESC"] = DbStr(r.SF_SHORT_DESC);
+            
 
             table.Rows.Add(row);
         }
@@ -191,6 +193,7 @@ public sealed class LoadTrackerImporter
         t.Columns.Add("BILL_NUMBER", typeof(string));
         t.Columns.Add("BOL #", typeof(string));
         t.Columns.Add("ORDER #", typeof(string));
+        t.Columns.Add("PO #", typeof(string));
 
         t.Columns.Add("DESTINATION", typeof(string));
         t.Columns.Add("DESTNAME", typeof(string));
@@ -210,6 +213,7 @@ public sealed class LoadTrackerImporter
         t.Columns.Add("DELIVER_BY", typeof(DateTime));
         t.Columns.Add("DELIVER_BY_END", typeof(DateTime));
         t.Columns.Add("ACTUAL_DELIVERY", typeof(DateTime));
+        t.Columns.Add("ACTUAL_PICKUP", typeof(DateTime));
         t.Columns.Add("CURRENT_STATUS", typeof(string));
         t.Columns.Add("PALLETS", typeof(double));
         t.Columns.Add("CUBE", typeof(double));
@@ -223,6 +227,7 @@ public sealed class LoadTrackerImporter
         t.Columns.Add("DANGEROUS_GOODS", typeof(string));
         t.Columns.Add("REQUESTED_EQUIPMEN", typeof(string));
         t.Columns.Add("SF_SHORT_DESC", typeof(string));
+        
 
         return t;
     }
@@ -251,6 +256,7 @@ CREATE TABLE #staging (
     BILL_NUMBER           VARCHAR(20)     NULL,
     [BOL #]               VARCHAR(40)     NULL,
     [ORDER #]             VARCHAR(40)     NULL,
+    [PO #]                VARCHAR(40)     NULL,
 
     DESTINATION           VARCHAR(10)     NULL,
     DESTNAME              VARCHAR(40)     NULL,
@@ -269,7 +275,8 @@ CREATE TABLE #staging (
     PICK_UP_BY_END        DATETIME       NULL,
     DELIVER_BY            DATETIME       NULL,
     DELIVER_BY_END        DATETIME       NULL,
-    ACTUAL_DELIVERY        DATETIME       NULL,
+    ACTUAL_DELIVERY       DATETIME       NULL,
+    ACTUAL_PICKUP         DATETIME       NULL,
     CURRENT_STATUS        VARCHAR(10)     NULL,
     PALLETS               FLOAT          NULL,
     CUBE                  FLOAT          NULL,
@@ -283,6 +290,7 @@ CREATE TABLE #staging (
     DANGEROUS_GOODS       CHAR(5)         NULL,
     REQUESTED_EQUIPMEN    VARCHAR(20)     NULL,
     SF_SHORT_DESC         VARCHAR(2000)   NULL
+    
 );";
 
         await using (var cmd = new SqlCommand(createSql, conn, tx) { CommandTimeout = timeout })
@@ -307,6 +315,7 @@ SET
     t.BILL_NUMBER        = s.BILL_NUMBER,
     t.[BOL #]            = s.[BOL #],
     t.[ORDER #]          = s.[ORDER #],
+    t.[PO #]             = s.[PO #],
     t.DESTINATION        = s.DESTINATION,
     t.DESTNAME           = s.DESTNAME,
     t.DESTCITY           = s.DESTCITY,
@@ -322,6 +331,7 @@ SET
     t.DELIVER_BY         = s.DELIVER_BY,
     t.DELIVER_BY_END     = s.DELIVER_BY_END,
     t.ACTUAL_DELIVERY    = s.ACTUAL_DELIVERY,
+    t.ACTUAL_PICKUP     = s.ACTUAL_PICKUP,
     t.CURRENT_STATUS     = s.CURRENT_STATUS,
     t.PALLETS            = s.PALLETS,
     t.CUBE               = s.CUBE,
@@ -333,12 +343,14 @@ SET
     t.DANGEROUS_GOODS    = s.DANGEROUS_GOODS,
     t.REQUESTED_EQUIPMEN = s.REQUESTED_EQUIPMEN,
     t.SF_SHORT_DESC      = s.SF_SHORT_DESC
+    
 FROM dbo.LoadTracker t
 JOIN #staging s ON s.DETAIL_LINE_ID = t.DETAIL_LINE_ID
 WHERE
     ISNULL(t.BILL_NUMBER,'') <> ISNULL(s.BILL_NUMBER,'')
  OR ISNULL(t.[BOL #],'') <> ISNULL(s.[BOL #],'')
  OR ISNULL(t.[ORDER #],'') <> ISNULL(s.[ORDER #],'')
+ OR ISNULL(t.[PO #],'') <> ISNULL(s.[PO #],'')
  OR ISNULL(t.DESTINATION,'') <> ISNULL(s.DESTINATION,'')
  OR ISNULL(t.DESTNAME,'') <> ISNULL(s.DESTNAME,'')
  OR ISNULL(t.DESTCITY,'') <> ISNULL(s.DESTCITY,'')
@@ -354,6 +366,7 @@ WHERE
  OR ISNULL(t.DELIVER_BY,'19000101') <> ISNULL(s.DELIVER_BY,'19000101')
  OR ISNULL(t.DELIVER_BY_END,'19000101') <> ISNULL(s.DELIVER_BY_END,'19000101')
  OR ISNULL(t.ACTUAL_DELIVERY,'19000101') <> ISNULL(s.ACTUAL_DELIVERY,'19000101')
+ OR ISNULL(t.ACTUAL_PICKUP,'19000101') <> ISNULL(s.ACTUAL_PICKUP,'19000101')
  OR ISNULL(t.CURRENT_STATUS,'') <> ISNULL(s.CURRENT_STATUS,'')
  OR ISNULL(t.PALLETS,0) <> ISNULL(s.PALLETS,0)
  OR ISNULL(t.CUBE,0) <> ISNULL(s.CUBE,0)
@@ -373,21 +386,21 @@ OR ISNULL(t.SF_SHORT_DESC,'') <> ISNULL(s.SF_SHORT_DESC,'');";
         // Insert new rows only
         var insertSql = @"
 INSERT INTO dbo.LoadTracker (
-    DETAIL_LINE_ID, BILL_NUMBER, [BOL #], [ORDER #],
+    DETAIL_LINE_ID, BILL_NUMBER, [BOL #], [ORDER #],[PO #],
     DESTINATION, DESTNAME, DESTCITY, DESTPROV,
     CUSTOMER, CALLNAME,
     ORIGIN, ORIGNAME, ORIGCITY, ORIGPROV,
-    PICK_UP_BY, PICK_UP_BY_END, DELIVER_BY, DELIVER_BY_END,ACTUAL_DELIVERY,
+    PICK_UP_BY, PICK_UP_BY_END, DELIVER_BY, DELIVER_BY_END,ACTUAL_DELIVERY,ACTUAL_PICKUP,
     CURRENT_STATUS, PALLETS, CUBE, WEIGHT,
     CUBE_UNITS, WEIGHT_UNITS, TEMPERATURE, TEMPERATURE_UNITS,
     DANGEROUS_GOODS, REQUESTED_EQUIPMEN, SF_SHORT_DESC
 )
 SELECT
-    s.DETAIL_LINE_ID, s.BILL_NUMBER, s.[BOL #], s.[ORDER #],
+    s.DETAIL_LINE_ID, s.BILL_NUMBER, s.[BOL #], s.[ORDER #],s.[PO #],
     s.DESTINATION, s.DESTNAME, s.DESTCITY, s.DESTPROV,
     s.CUSTOMER, s.CALLNAME,
     s.ORIGIN, s.ORIGNAME, s.ORIGCITY, s.ORIGPROV,
-    s.PICK_UP_BY, s.PICK_UP_BY_END, s.DELIVER_BY, s.DELIVER_BY_END,s.ACTUAL_DELIVERY,
+    s.PICK_UP_BY, s.PICK_UP_BY_END, s.DELIVER_BY, s.DELIVER_BY_END,s.ACTUAL_DELIVERY,s.ACTUAL_PICKUP,
     s.CURRENT_STATUS, s.PALLETS, s.CUBE, s.WEIGHT,
     s.CUBE_UNITS, s.WEIGHT_UNITS, s.TEMPERATURE, s.TEMPERATURE_UNITS,
     s.DANGEROUS_GOODS, s.REQUESTED_EQUIPMEN, s.SF_SHORT_DESC

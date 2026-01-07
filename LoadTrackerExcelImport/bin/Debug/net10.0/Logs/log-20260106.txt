@@ -31,3 +31,11 @@
 2026-01-06 12:56:00.585 -05:00 [INF] CSV unchanged ("2026-01-06T17:48:55.1183041Z"). Skipping.
 2026-01-06 12:56:00.585 -05:00 [INF] Next run "2026-01-06T13:00:00.0000000" (delay "00:03:59.4155467")
 2026-01-06 12:58:25.091 -05:00 [INF] Application is shutting down...
+2026-01-06 13:15:13.319 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-06 13:15:13.320 -05:00 [INF] Tick "2026-01-06T13:15:13.3135604"
+2026-01-06 13:15:13.348 -05:00 [INF] Hosting environment: Development
+2026-01-06 13:15:13.350 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-06 13:15:13.973 -05:00 [INF] Cleanup deleted 4 rows older than 6 months.
+2026-01-06 13:15:13.982 -05:00 [INF] Done. Rows=4 Updated=4 Inserted=0
+2026-01-06 13:15:13.985 -05:00 [INF] Next run "2026-01-06T13:21:00.0000000" (delay "00:05:46.6864396")
+2026-01-06 13:15:19.793 -05:00 [INF] Application is shutting down...

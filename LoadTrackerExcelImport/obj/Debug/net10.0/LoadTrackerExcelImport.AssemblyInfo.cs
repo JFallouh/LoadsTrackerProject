@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LoadTrackerExcelImport")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8b3e5bfbc9c4a2c1daed3ec91d1a0d0a37a008e7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff663f876e70544c7a166d40d59e17449ff408e5")]
 [assembly: System.Reflection.AssemblyProductAttribute("LoadTrackerExcelImport")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LoadTrackerExcelImport")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

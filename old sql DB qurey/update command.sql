@@ -1,0 +1,6 @@
+USE LoadTrackerDB;
+GO
+
+UPDATE dbo.LoadTracker
+SET SF_SHORT_DESC = 'TESTO'
+WHERE DETAIL_LINE_ID = 5409; 

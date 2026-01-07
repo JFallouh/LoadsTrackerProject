@@ -79,3 +79,14 @@ BEGIN
     ADD [SF_SHORT_DESC] VARCHAR(2000) NULL;
 END
 GO
+
+
+
+USE LoadTrackerDB;
+GO
+
+ALTER TABLE dbo.LoadTracker
+ADD [PO #"] VARCHAR(40)     NULL,;
+GO
+
+              

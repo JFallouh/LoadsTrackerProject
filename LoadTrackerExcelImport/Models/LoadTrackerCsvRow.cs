@@ -9,6 +9,8 @@ public sealed class LoadTrackerCsvRow
 
     [Name("BOL #")]          public string? BOL_NO { get; set; }
     [Name("ORDER #")]        public string? ORDER_NO { get; set; }
+    
+    [Name("PO #")]          public string? PO_NO { get; set; }
 
     [Name("DESTINATION")]    public string? DESTINATION { get; set; }
     [Name("DESTNAME")]       public string? DESTNAME { get; set; }
@@ -28,7 +30,7 @@ public sealed class LoadTrackerCsvRow
     [Name("DELIVER_BY")]     public string? DELIVER_BY { get; set; }
     [Name("DELIVER_BY_END")] public string? DELIVER_BY_END { get; set; }
     [Name("ACTUAL_DELIVERY")] public string? ACTUAL_DELIVERY { get; set; }
-
+    [Name("ACTUAL_PICKUP")] public string? ACTUAL_PICKUP { get; set; }
     [Name("CURRENT_STATUS")] public string? CURRENT_STATUS { get; set; }
     [Name("PALLETS")]        public string? PALLETS { get; set; }
     [Name("CUBE")]           public string? CUBE { get; set; }

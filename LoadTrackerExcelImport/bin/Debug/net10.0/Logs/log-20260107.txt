@@ -1,0 +1,80 @@
+2026-01-07 12:16:15.018 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-07 12:16:15.019 -05:00 [INF] Tick "2026-01-07T12:16:15.0109891"
+2026-01-07 12:16:15.047 -05:00 [INF] Hosting environment: Development
+2026-01-07 12:16:15.049 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-07 12:16:15.513 -05:00 [ERR] ImportOnce failed.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'ACTULAL_PICKUP'.
+Invalid column name 'ACTULAL_PICKUP'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__193_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.ImportOnceAsync(CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 81
+ClientConnectionId:a7824d8f-0f37-43ee-92a4-b1bd6bcfd08d
+Error Number:207,State:1,Class:16
+2026-01-07 12:16:15.531 -05:00 [INF] Next run "2026-01-07T12:21:00.0000000" (delay "00:04:44.9890109")
+2026-01-07 12:19:10.016 -05:00 [INF] Application is shutting down...
+2026-01-07 12:20:45.788 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-07 12:20:45.790 -05:00 [INF] Tick "2026-01-07T12:20:45.7837938"
+2026-01-07 12:20:45.816 -05:00 [INF] Hosting environment: Development
+2026-01-07 12:20:45.818 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-07 12:20:46.180 -05:00 [ERR] ImportOnce failed.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'ACTULAL_PICKUP'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__193_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.ImportOnceAsync(CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 81
+ClientConnectionId:98437c24-2018-4b3b-9890-7578c552def4
+Error Number:207,State:1,Class:16
+2026-01-07 12:20:46.204 -05:00 [INF] Next run "2026-01-07T12:21:00.0000000" (delay "00:00:14.2162062")
+2026-01-07 12:21:00.437 -05:00 [INF] Tick "2026-01-07T12:21:00.4371287"
+2026-01-07 12:21:00.511 -05:00 [ERR] ImportOnce failed.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'ACTULAL_PICKUP'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalEndExecuteNonQuery(IAsyncResult asyncResult, Boolean isInternal, String endMethod)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryInternal(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.EndExecuteNonQueryAsync(IAsyncResult asyncResult)
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<InternalExecuteNonQueryAsync>b__193_1(IAsyncResult asyncResult)
+   at System.Threading.Tasks.TaskFactory`1.FromAsyncCoreLogic(IAsyncResult iar, Func`2 endFunction, Action`1 endAction, Task`1 promise, Boolean requiresSynchronization)
+--- End of stack trace from previous location ---
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 384
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.UpsertAsync(String connStr, DataTable data, CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 437
+   at LoadTrackerExcelImport.Services.LoadTrackerImporter.ImportOnceAsync(CancellationToken ct) in C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport\Services\LoadTrackerImporter.cs:line 81
+ClientConnectionId:98437c24-2018-4b3b-9890-7578c552def4
+Error Number:207,State:1,Class:16
+2026-01-07 12:21:00.512 -05:00 [INF] Next run "2026-01-07T12:28:00.0000000" (delay "00:06:59.5628713")
+2026-01-07 12:21:02.545 -05:00 [INF] Application is shutting down...
+2026-01-07 12:21:53.754 -05:00 [INF] Tick "2026-01-07T12:21:53.7481532"
+2026-01-07 12:21:53.753 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-07 12:21:53.784 -05:00 [INF] Hosting environment: Development
+2026-01-07 12:21:53.784 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-07 12:21:54.214 -05:00 [INF] Cleanup deleted 0 rows older than 6 months.
+2026-01-07 12:21:54.223 -05:00 [INF] Done. Rows=3 Updated=0 Inserted=3
+2026-01-07 12:21:54.227 -05:00 [INF] Next run "2026-01-07T12:28:00.0000000" (delay "00:06:06.2518468")
+2026-01-07 12:22:01.617 -05:00 [INF] Application is shutting down...

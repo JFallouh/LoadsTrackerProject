@@ -1,0 +1,19 @@
+dotnet publish "C:\Coding\JamesFallouh\Services\LoadTrackerExcelImport" -c Release -r win-x64 --self-contained false -o "C:\Coding\JamesFallouh\Services\publish\LoadTrackerExcelImport"
+
+
+
+# Remove an existing service first
+if (Get-Service LoadTrackerExcelImportService -ErrorAction SilentlyContinue) {
+  Stop-Service LoadTrackerExcelImportService -Force
+  sc.exe delete LoadTrackerExcelImportService
+}
+
+# Create & start the new service
+New-Service `
+  -Name        LoadTrackerExcelImportService `
+  -BinaryPathName "C:\Coding\JamesFallouh\Services\publish\LoadTrackerExcelImport\LoadTrackerExcelImport.exe" `
+  -DisplayName "LoadTrackerExcelImport" `
+  -StartupType Automatic `
+  -Description "LoadTrackerExcelImport background service"
+
+Start-Service LoadTrackerExcelImportService
