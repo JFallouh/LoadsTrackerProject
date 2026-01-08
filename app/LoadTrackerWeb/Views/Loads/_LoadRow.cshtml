@@ -1,0 +1,65 @@
+@model LoadTrackerWeb.Models.LoadRowViewModel
+@{
+    bool canEdit = (ViewData["CanEdit"] as bool?) == true;
+}
+
+<tr data-rowid="@Model.DetailLineId">
+    <td data-col="probill">@Model.Probill</td>
+    <td data-col="bol">@Model.BolNo</td>
+    <td data-col="order">@Model.OrderNo</td>
+    <td data-col="po">@Model.PoNo</td>
+
+    <td data-col="receiver">@Model.Receiver</td>
+    <td data-col="rcity">@Model.ReceiverCity</td>
+    <td data-col="rprov">@Model.ReceiverProv</td>
+
+    <td data-col="pickup">@Model.ActualPickup?.ToString("yyyy-MM-dd")</td>
+    <td data-col="rad">@Model.RadText</td>
+
+    <td data-col="status" class="yellow">@Model.CurrentStatus</td>
+
+    <td data-col="ddate">@Model.DeliveryDateText</td>
+    <td data-col="dtime">@Model.DeliveryTimeText</td>
+
+    <td data-col="exception">
+        @if (canEdit)
+        {
+            <input type="checkbox" class="ex" @(Model.Exception ? "checked" : "") />
+        }
+        else
+        {
+            @(Model.Exception ? "YES" : "NO")
+        }
+    </td>
+
+    <td data-col="ontime">@Model.OnTimeText</td>
+
+    <td data-col="delay">
+        @if (canEdit)
+        {
+            <input class="delay" value="@Model.UserNonCarrierDelay" maxlength="255" />
+        }
+        else
+        {
+            @Model.NonCarrierDelay
+        }
+    </td>
+
+    <td data-col="comments">
+        @if (canEdit)
+        {
+            <input class="comments" value="@Model.Comments" maxlength="300" />
+        }
+        else
+        {
+            @Model.Comments
+        }
+    </td>
+
+    @if (canEdit)
+    {
+        <td>
+            <button type="button" class="save">Save</button>
+        </td>
+    }
+</tr>

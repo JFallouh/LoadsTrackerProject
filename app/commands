@@ -1,0 +1,5 @@
+dotnet new mvc -n LoadTrackerWeb
+
+dotnet add package Dapper
+dotnet add package Microsoft.Data.SqlClient
+dotnet add package System.DirectoryServices.AccountManagement

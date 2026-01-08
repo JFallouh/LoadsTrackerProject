@@ -90,3 +90,65 @@ ADD [PO #"] VARCHAR(40)     NULL,;
 GO
 
               
+
+USE LoadTrackerDB;
+GO
+
+USE LoadTrackerDB;
+GO
+
+
+
+
+
+--Fix 1 (recommended): don’t add the CHECK at all (BIT already enforces 0/1)
+USE LoadTrackerDB;
+GO
+
+IF COL_LENGTH('dbo.LoadTracker', 'EXCEPTION') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD [EXCEPTION] BIT NOT NULL
+        CONSTRAINT DF_LoadTracker_EXCEPTION DEFAULT (0);
+END
+GO
+
+--Fix 2: split into separate batches (so the column exists before the CHECK is compiled)
+USE LoadTrackerDB;
+GO
+
+IF COL_LENGTH('dbo.LoadTracker', 'EXCEPTION') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD [EXCEPTION] BIT NOT NULL
+        CONSTRAINT DF_LoadTracker_EXCEPTION DEFAULT (0);
+END
+GO
+
+IF OBJECT_ID('dbo.CK_LoadTracker_EXCEPTION_01', 'C') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD CONSTRAINT CK_LoadTracker_EXCEPTION_01
+        CHECK ([EXCEPTION] IN (0,1));
+END
+GO
+
+
+
+
+
+IF COL_LENGTH('dbo.LoadTracker', 'EXCEPTION') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD [EXCEPTION] BIT NOT NULL
+        CONSTRAINT DF_LoadTracker_EXCEPTION DEFAULT (0);
+END
+GO
+
+IF OBJECT_ID('dbo.CK_LoadTracker_EXCEPTION_01', 'C') IS NULL
+BEGIN
+    ALTER TABLE dbo.LoadTracker
+    ADD CONSTRAINT CK_LoadTracker_EXCEPTION_01
+        CHECK ([EXCEPTION] IN (0,1));
+END
+GO

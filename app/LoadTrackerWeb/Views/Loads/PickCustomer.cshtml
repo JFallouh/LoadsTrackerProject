@@ -1,0 +1,20 @@
+@model LoadTrackerWeb.Models.CustomerPickViewModel
+@{
+    ViewData["Title"] = "Select Customer";
+}
+
+<h2>Select Customer</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <select name="SelectedCustomerCode">
+        <option value="">-- Select --</option>
+        @foreach (var c in Model.Customers)
+        {
+            <option value="@c.CustomerCode">@c.CustomerCode - @c.CallName</option>
+        }
+    </select>
+
+    <button type="submit">Continue</button>
+</form>

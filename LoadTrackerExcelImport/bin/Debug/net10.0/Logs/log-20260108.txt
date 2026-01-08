@@ -1,0 +1,8 @@
+2026-01-08 07:02:34.127 -05:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-01-08 07:02:34.128 -05:00 [INF] Tick "2026-01-08T07:02:34.1221671"
+2026-01-08 07:02:34.156 -05:00 [INF] Hosting environment: Development
+2026-01-08 07:02:34.157 -05:00 [INF] Content root path: C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\LoadTrackerExcelImport
+2026-01-08 07:02:34.765 -05:00 [INF] Cleanup deleted 0 rows older than 6 months.
+2026-01-08 07:02:34.782 -05:00 [INF] Done. Rows=3 Updated=1 Inserted=0
+2026-01-08 07:02:34.785 -05:00 [INF] Next run "2026-01-08T07:07:00.0000000" (delay "00:04:25.8778329")
+2026-01-08 07:02:38.299 -05:00 [INF] Application is shutting down...

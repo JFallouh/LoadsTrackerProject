@@ -1,0 +1,98 @@
+@model LoadTrackerWeb.Models.LoadsPageViewModel
+@{
+    ViewData["Title"] = "Load Tracker";
+    ViewData["CanEdit"] = Model.CanEdit && Model.IsEmployee;
+}
+
+<div class="topbar">
+    <div class="title-left">
+        <div class="company">TOTAL LOGISTICS GROUP OF COMPANIES</div>
+        <div class="customerline">Customer: <b>@Model.CustomerCode</b> @Model.CustomerName</div>
+    </div>
+
+    <div class="status-box">
+        <table>
+            <tr><th>Status</th><th>Load Count</th><th>Percent</th></tr>
+            <tr><td>ON-TIME</td><td>@Model.OnTimeCount</td><td>@Model.OnTimePct %</td></tr>
+            <tr><td>Late-Carrier</td><td>@Model.LateCarrierCount</td><td>@Model.LateCarrierPct %</td></tr>
+            <tr><td>Late – Other</td><td>@Model.LateOtherCount</td><td>@Model.LateOtherPct %</td></tr>
+        </table>
+    </div>
+</div>
+
+<div class="sheet-header">
+    <div class="sheet-title-left">DAILY- FREIGHT &amp; TRANSPORTATION LOG</div>
+    <div class="sheet-title-right">POD INFORMATION</div>
+</div>
+
+<div class="column-toggles">
+    <span>Columns (view only):</span>
+    <label><input type="checkbox" data-col="probill" checked />PROBILL</label>
+    <label><input type="checkbox" data-col="bol" checked />BOL #</label>
+    <label><input type="checkbox" data-col="order" checked />ORDER #</label>
+    <label><input type="checkbox" data-col="po" checked />PO #</label>
+    <label><input type="checkbox" data-col="receiver" checked />RECEIVER</label>
+    <label><input type="checkbox" data-col="rcity" checked />RECEIVER City</label>
+    <label><input type="checkbox" data-col="rprov" checked />RECEIVER PROV.</label>
+    <label><input type="checkbox" data-col="pickup" checked />PICK UP DATE</label>
+    <label><input type="checkbox" data-col="rad" checked />RAD</label>
+    <label><input type="checkbox" data-col="status" checked />CURRENT STATUS</label>
+    <label><input type="checkbox" data-col="ddate" checked />DELIVERY DATE</label>
+    <label><input type="checkbox" data-col="dtime" checked />DELIVERY TIME</label>
+    <label><input type="checkbox" data-col="exception" checked />EXCEPTION</label>
+    <label><input type="checkbox" data-col="ontime" checked />ON TIME</label>
+    <label><input type="checkbox" data-col="delay" checked />Non-Carrier Delay</label>
+    <label><input type="checkbox" data-col="comments" checked />COMMENTS</label>
+</div>
+
+<!-- Important: put AntiForgery token on the page so JS can reuse it -->
+<form id="antiForgeryForm">
+    @Html.AntiForgeryToken()
+</form>
+
+<table class="sheet" id="loadsTable"
+       data-customer="@Model.CustomerCode"
+       data-year="@Model.Year"
+       data-month="@Model.Month"
+       data-canedit="@(Model.CanEdit && Model.IsEmployee ? "1" : "0")">
+    <thead>
+        <tr>
+            <th data-col="probill">PROBILL</th>
+            <th data-col="bol">BOL #</th>
+            <th data-col="order">ORDER #</th>
+            <th data-col="po">PO #</th>
+            <th data-col="receiver">RECEIVER</th>
+            <th data-col="rcity">RECEIVER City</th>
+            <th data-col="rprov">RECEIVER PROV.</th>
+            <th data-col="pickup">PICK UP DATE</th>
+            <th data-col="rad">RAD</th>
+            <th data-col="status" class="yellow">CURRENT STATUS</th>
+            <th data-col="ddate">DELIVERY DATE</th>
+            <th data-col="dtime">DELIVERY TIME</th>
+            <th data-col="exception">EXCEPTION</th>
+            <th data-col="ontime">ON TIME</th>
+            <th data-col="delay">Non-Carrier Delay</th>
+            <th data-col="comments">COMMENTS</th>
+            @if (Model.CanEdit && Model.IsEmployee)
+            {
+                <th>Save</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var r in Model.Rows)
+        {
+            <partial name="_LoadRow" model="r" />
+        }
+    </tbody>
+</table>
+
+<form method="post" asp-controller="Account" asp-action="Logout">
+    @Html.AntiForgeryToken()
+    <button type="submit">Logout</button>
+</form>
+
+@section Scripts {
+    <script src="~/lib/signalr/signalr.min.js"></script>
+    <script src="~/js/loadtracker.js"></script>
+}

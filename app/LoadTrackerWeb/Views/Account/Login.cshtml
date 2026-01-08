@@ -1,0 +1,29 @@
+@model LoadTrackerWeb.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h2>Login</h2>
+
+@if (!string.IsNullOrWhiteSpace(Model.Error))
+{
+    <div class="error">@Model.Error</div>
+}
+
+<form method="post">
+    @Html.AntiForgeryToken()
+
+    <label>Login Type</label>
+    <select name="LoginType">
+        <option value="Employee">Employee (Active Directory)</option>
+        <option value="Customer">Customer</option>
+    </select>
+
+    <label>Username</label>
+    <input name="UserName" value="@Model.UserName" />
+
+    <label>Password</label>
+    <input type="password" name="Password" />
+
+    <button type="submit">Login</button>
+</form>
