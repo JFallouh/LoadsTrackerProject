@@ -224,3 +224,54 @@ button.save { padding: 2px 8px; }
 /* Offcanvas spacing */
 .offcanvas .form-label { font-weight: 700; }
 .offcanvas .hint { font-size: 12px; color: #64748b; }
+
+/* ---- Columns offcanvas: clean two-column layout + visible checkbox UI ---- */
+.cols-grid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+  margin-top: 10px;
+}
+
+.col-item{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.col-item:hover{
+  border-color: rgba(15, 23, 42, 0.22);
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+}
+
+.col-item span{
+  font-size: 13px;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+/* Make checkbox border visible + professional */
+.col-check{
+  width: 18px;
+  height: 18px;
+  accent-color: #0f3b66; /* modern browsers */
+  flex: 0 0 auto;
+}
+
+/* Fallback: if browser ignores accent-color, force visible outline */
+.col-check{
+  outline: 1px solid rgba(15, 23, 42, 0.35);
+  outline-offset: -2px;
+  border-radius: 4px;
+}
+
+/* On very small screens: single column */
+@media (max-width: 420px){
+  .cols-grid{ grid-template-columns: 1fr; }
+}

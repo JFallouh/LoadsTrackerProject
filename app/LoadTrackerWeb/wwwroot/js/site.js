@@ -10,7 +10,8 @@
 
   // ---------- Column toggles (per-user browser localStorage) ----------
   const colToggleKey = "lt_columns";
-  const toggles = document.querySelectorAll(".column-toggles input[type=checkbox]");
+ const toggles = document.querySelectorAll("#columnsPanel input[type=checkbox][data-col]");
+
 
   // These define your two header groups (must match your columns)
   const leftGroupCols = ["probill","bol","order","po","receiver","rcity","rprov","pickup","rad","status"];
