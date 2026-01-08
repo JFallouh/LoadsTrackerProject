@@ -1,119 +1,146 @@
 /* File: wwwroot/css/site.css */
 
-/* -------------------------------------------------------
-   Page behavior: full page scroll + sticky footer
--------------------------------------------------------- */
-html, body {
-  height: 100%;
-  overflow: auto;
-  overflow-x: auto;
-}
+/* ----------------------------
+   Layout: footer always bottom
+----------------------------- */
+html, body { height: 100%; }
 
-body.app-body {
+body.app-body{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
   font-family: Arial, sans-serif;
   font-size: 13px;
   background: #f6f8fb;
   color: #1f2937;
   margin: 0;
+
+  /* allow full-page horizontal scroll for wide table */
+  overflow-x: auto;
 }
 
-/* container-fluid wrapper becomes a full-height flex column */
-.app-container {
-  min-height: calc(100vh - 0px);
-  display: flex;
-  flex-direction: column;
-  padding-left: 12px;
-  padding-right: 12px;
-}
-
-/* main grows to push footer down when content is short */
-.app-main {
+/* main grows, footer stays bottom */
+.app-main{
   flex: 1 0 auto;
-  padding-bottom: 16px;
+  padding: 14px 12px 18px 12px;
 }
 
-/* footer sits at bottom */
-.app-footer {
+.app-footer{
   flex-shrink: 0;
   border-top: 1px solid #e5e7eb;
   background: #ffffff;
   padding: 10px 0;
 }
 
-.footer-muted {
+.footer-muted{
   color: #6b7280;
   font-size: 12px;
 }
 
-/* -------------------------------------------------------
-   Header / Navbar theme (logistics-ish)
--------------------------------------------------------- */
-.app-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
+/* ----------------------------
+   Navbar (NOT sticky)
+----------------------------- */
+.app-header{ position: static; }
 
-.app-navbar {
+.app-navbar{
   background: linear-gradient(90deg, #0b2a4a 0%, #0f3b66 60%, #0b2a4a 100%);
   border-bottom: 1px solid rgba(255,255,255,0.12);
   box-shadow: 0 8px 24px rgba(0,0,0,0.12);
 }
 
-.navbar-brand { white-space: nowrap; }
+.navbar-brand{ white-space: nowrap; }
 
-/* 2× bigger + circular logo */
-.app-logo {
-  height: 68px;            /* was ~34px */
+/* bigger circular logo */
+.app-logo{
+  height: 68px;
   width: 68px;
   object-fit: cover;
-  border-radius: 9999px;   /* circle */
+  border-radius: 9999px;
   background: rgba(255,255,255,0.10);
   padding: 6px;
   box-shadow: 0 10px 22px rgba(0,0,0,0.22);
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
-.navbar-brand:hover .app-logo {
+.navbar-brand:hover .app-logo{
   transform: translateY(-1px);
   box-shadow: 0 14px 28px rgba(0,0,0,0.26);
 }
 
-.brand-text {
+.brand-text{
   font-weight: 700;
   letter-spacing: 0.2px;
   color: #ffffff;
   opacity: 0.95;
 }
 
-/* -------------------------------------------------------
-   Generic defaults
--------------------------------------------------------- */
-a { color: #0b5ed7; }
-a:hover { color: #0a58ca; }
-
-.btn-primary {
-  color: #fff;
-  background-color: #0b5ed7;
-  border-color: #0b5ed7;
+.nav-greeting{
+  color: rgba(255,255,255,0.88);
+  font-size: 0.92rem;
+  white-space: nowrap;
 }
 
-.border-top { border-top: 1px solid #e5e7eb !important; }
-.border-bottom { border-bottom: 1px solid #e5e7eb !important; }
-.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }
+.app-icon-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+}
 
-/* -------------------------------------------------------
-   Your existing page/table styles
--------------------------------------------------------- */
+.app-icon{
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* ----------------------------
+   Auth pages (Login / PickCustomer)
+----------------------------- */
+.auth-page{
+  min-height: calc(100vh - 140px); /* header+footer approx */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 10px;
+}
+
+.auth-card{
+  width: min(520px, 100%);
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.10);
+  background: #fff;
+}
+
+.auth-card .card-header{
+  background: linear-gradient(90deg, rgba(11,42,74,0.08), rgba(15,59,102,0.08));
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.auth-title{
+  font-weight: 800;
+  color: #0b2a4a;
+  margin: 0;
+}
+
+.auth-subtitle{
+  margin: 0;
+  color: #475569;
+  font-size: 12px;
+}
+
+/* ----------------------------
+   Your existing Load Tracker styles
+----------------------------- */
 .error { color: #b00020; margin: 10px 0; }
 
 .topbar { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:10px; }
 .company { font-weight:bold; }
 .status-box table { border-collapse: collapse; font-size: 12px; }
 .status-box th, .status-box td { border:1px solid #999; padding:4px 8px; }
-
-.column-toggles { margin:10px 0; font-size:12px; }
-.column-toggles label { margin-right:10px; white-space:nowrap; }
 
 .no-records {
   margin: 10px 0;
@@ -122,10 +149,7 @@ a:hover { color: #0a58ca; }
   background: #f9f9f9;
 }
 
-.month-picker { margin: 10px 0; font-size: 12px; }
-.month-picker select { margin-right: 6px; }
-
-/* Table is wide: page scrolls (not a div) */
+/* The sheet is wide -> body scrolls horizontally */
 table.sheet {
   border-collapse: collapse;
   table-layout: fixed;
@@ -136,7 +160,6 @@ table.sheet {
   border-radius: 10px;
 }
 
-/* Cells */
 table.sheet th, table.sheet td {
   border:1px solid #999;
   padding:4px;
@@ -145,7 +168,6 @@ table.sheet th, table.sheet td {
   white-space: nowrap;
 }
 
-/* Wrap long text */
 table.sheet td.wrap {
   white-space: normal;
   word-break: break-word;
@@ -153,7 +175,6 @@ table.sheet td.wrap {
 
 .yellow { background: #fff49a; }
 
-/* Sticky two header rows */
 :root { --group-row-h: 28px; }
 
 table.sheet thead tr.group-row th {
@@ -175,10 +196,8 @@ table.sheet thead tr.col-row th {
   padding-right: 10px;
 }
 
-/* Group header borders */
 .group-left { border-right: 2px solid #333 !important; }
 
-/* Editors */
 textarea.delay, textarea.comments {
   width: 98%;
   min-height: 2.2em;
@@ -187,7 +206,6 @@ textarea.delay, textarea.comments {
   font-size: inherit;
 }
 
-/* Resizer handle */
 .col-resizer {
   position: absolute;
   right: 0;
@@ -202,3 +220,7 @@ table.sheet thead th { position: sticky; }
 
 .save-col { width: 60px; }
 button.save { padding: 2px 8px; }
+
+/* Offcanvas spacing */
+.offcanvas .form-label { font-weight: 700; }
+.offcanvas .hint { font-size: 12px; color: #64748b; }

@@ -4,10 +4,10 @@
     ViewData["Title"] = "Load Tracker";
     ViewData["CanEdit"] = Model.CanEdit && Model.IsEmployee;
 
+    // show the navbar tool icons only on this page
+    ViewData["ShowSheetTools"] = true;
+
     var monthName = new DateTime(Model.Year, Model.Month, 1).ToString("MMMM yyyy");
-    var now = DateTime.Now;
-    var minYear = now.Year - 2;
-    var maxYear = now.Year + 1;
 }
 
 <div class="topbar">
@@ -26,71 +26,12 @@
     </div>
 </div>
 
-<form method="get" asp-controller="Loads" asp-action="Index" class="month-picker">
-    <label>Month:</label>
-
-    <select name="year">
-        @for (var y = minYear; y <= maxYear; y++)
-        {
-            if (y == Model.Year)
-            {
-                <option value="@y" selected>@y</option>
-            }
-            else
-            {
-                <option value="@y">@y</option>
-            }
-        }
-    </select>
-
-    <select name="month">
-        @for (var m = 1; m <= 12; m++)
-        {
-            var label = new DateTime(2000, m, 1).ToString("MMM");
-            if (m == Model.Month)
-            {
-                <option value="@m" selected>@label</option>
-            }
-            else
-            {
-                <option value="@m">@label</option>
-            }
-        }
-    </select>
-
-    <button type="submit">Go</button>
-
-    @if (Model.IsEmployee)
-    {
-        <a style="margin-left:10px;" asp-controller="Loads" asp-action="PickCustomer">Change customer</a>
-    }
-</form>
-
 @if (Model.Rows == null || Model.Rows.Count == 0)
 {
     <div class="no-records">No records for <b>@monthName</b>.</div>
 }
 
-<div class="column-toggles">
-    <span>Columns (view only):</span>
-    <label><input type="checkbox" data-col="probill" checked />PROBILL</label>
-    <label><input type="checkbox" data-col="bol" checked />BOL #</label>
-    <label><input type="checkbox" data-col="order" checked />ORDER #</label>
-    <label><input type="checkbox" data-col="po" checked />PO #</label>
-    <label><input type="checkbox" data-col="receiver" checked />RECEIVER</label>
-    <label><input type="checkbox" data-col="rcity" checked />RECEIVER City</label>
-    <label><input type="checkbox" data-col="rprov" checked />RECEIVER PROV.</label>
-    <label><input type="checkbox" data-col="pickup" checked />PICK UP DATE</label>
-    <label><input type="checkbox" data-col="rad" checked />RAD</label>
-    <label><input type="checkbox" data-col="status" checked />CURRENT STATUS</label>
-    <label><input type="checkbox" data-col="ddate" checked />DELIVERY DATE</label>
-    <label><input type="checkbox" data-col="dtime" checked />DELIVERY TIME</label>
-    <label><input type="checkbox" data-col="exception" checked />EXCEPTION</label>
-    <label><input type="checkbox" data-col="ontime" checked />ON TIME</label>
-    <label><input type="checkbox" data-col="delay" checked />Non-Carrier Delay</label>
-    <label><input type="checkbox" data-col="comments" checked />COMMENTS</label>
-</div>
-
+<!-- AntiForgery token for JS updates -->
 <form id="antiForgeryForm">
     @Html.AntiForgeryToken()
 </form>
@@ -134,20 +75,95 @@
     </thead>
 
     <tbody>
-        @if (Model.Rows != null)
+        @foreach (var r in Model.Rows)
         {
-            foreach (var r in Model.Rows)
-            {
-                <partial name="_LoadRow" model="r" />
-            }
+            <partial name="_LoadRow" model="r" />
         }
     </tbody>
 </table>
 
-<form method="post" asp-controller="Account" asp-action="Logout" style="margin-top:10px;">
-    @Html.AntiForgeryToken()
-    <button type="submit" class="btn btn-sm btn-outline-secondary">Logout</button>
-</form>
+@* OFFCANVAS: Month *@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="monthPanel" aria-labelledby="monthPanelLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="monthPanelLabel">Month</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <form method="get" asp-controller="Loads" asp-action="Index" class="d-grid gap-3">
+            <div>
+                <label class="form-label">Year</label>
+                <select name="year" class="form-select">
+                    @for (var y = DateTime.Now.Year - 2; y <= DateTime.Now.Year + 1; y++)
+                    {
+                        if (y == Model.Year)
+                        {
+                            <option value="@y" selected>@y</option>
+                        }
+                        else
+                        {
+                            <option value="@y">@y</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div>
+                <label class="form-label">Month</label>
+                <select name="month" class="form-select">
+                    @for (var m = 1; m <= 12; m++)
+                    {
+                        var label = new DateTime(2000, m, 1).ToString("MMM");
+                        if (m == Model.Month)
+                        {
+                            <option value="@m" selected>@label</option>
+                        }
+                        else
+                        {
+                            <option value="@m">@label</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Go</button>
+
+            @if (Model.IsEmployee)
+            {
+                <a class="btn btn-outline-secondary" asp-controller="Loads" asp-action="PickCustomer">Change customer</a>
+            }
+        </form>
+    </div>
+</div>
+
+@* OFFCANVAS: Columns *@
+<div class="offcanvas offcanvas-end" tabindex="-1" id="columnsPanel" aria-labelledby="columnsPanelLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="columnsPanelLabel">Columns</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="mb-2 hint">View only (saved per browser).</div>
+
+        <div class="column-toggles d-grid gap-2">
+            <label><input type="checkbox" data-col="probill" checked /> PROBILL</label>
+            <label><input type="checkbox" data-col="bol" checked /> BOL #</label>
+            <label><input type="checkbox" data-col="order" checked /> ORDER #</label>
+            <label><input type="checkbox" data-col="po" checked /> PO #</label>
+            <label><input type="checkbox" data-col="receiver" checked /> RECEIVER</label>
+            <label><input type="checkbox" data-col="rcity" checked /> RECEIVER City</label>
+            <label><input type="checkbox" data-col="rprov" checked /> RECEIVER PROV.</label>
+            <label><input type="checkbox" data-col="pickup" checked /> PICK UP DATE</label>
+            <label><input type="checkbox" data-col="rad" checked /> RAD</label>
+            <label><input type="checkbox" data-col="status" checked /> CURRENT STATUS</label>
+            <label><input type="checkbox" data-col="ddate" checked /> DELIVERY DATE</label>
+            <label><input type="checkbox" data-col="dtime" checked /> DELIVERY TIME</label>
+            <label><input type="checkbox" data-col="exception" checked /> EXCEPTION</label>
+            <label><input type="checkbox" data-col="ontime" checked /> ON TIME</label>
+            <label><input type="checkbox" data-col="delay" checked /> Non-Carrier Delay</label>
+            <label><input type="checkbox" data-col="comments" checked /> COMMENTS</label>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <script src="~/lib/signalr/signalr.min.js"></script>

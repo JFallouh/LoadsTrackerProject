@@ -3,27 +3,43 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<div class="auth-page">
+    <div class="auth-card card">
+        <div class="card-header p-3">
+            <h4 class="auth-title">Sign in</h4>
+            <p class="auth-subtitle">Total Logistics Load Tracker</p>
+        </div>
 
-@if (!string.IsNullOrWhiteSpace(Model.Error))
-{
-    <div class="error">@Model.Error</div>
-}
+        <div class="card-body p-4">
+            @if (!string.IsNullOrWhiteSpace(Model.Error))
+            {
+                <div class="alert alert-danger py-2">@Model.Error</div>
+            }
 
-<form method="post">
-    @Html.AntiForgeryToken()
+            <form method="post" class="d-grid gap-3">
+                @Html.AntiForgeryToken()
 
-    <label>Login Type</label>
-    <select name="LoginType">
-        <option value="Employee">Employee (Active Directory)</option>
-        <option value="Customer">Customer</option>
-    </select>
+                <div>
+                    <label class="form-label">Login Type</label>
+                    <select name="LoginType" class="form-select">
+                        <option value="Employee" selected="@(Model.LoginType == "Employee")">Employee</option>
+                        <option value="Customer" selected="@(Model.LoginType == "Customer")">Customer</option>
+                    </select>
+                    @* <div class="hint mt-1">Employee uses company login. Customer uses assigned credentials.</div> *@
+                </div>
 
-    <label>Username</label>
-    <input name="UserName" value="@Model.UserName" />
+                <div>
+                    <label class="form-label">Username</label>
+                    <input name="UserName" value="@Model.UserName" class="form-control" autocomplete="username" />
+                </div>
 
-    <label>Password</label>
-    <input type="password" name="Password" />
+                <div>
+                    <label class="form-label">Password</label>
+                    <input type="password" name="Password" class="form-control" autocomplete="current-password" />
+                </div>
 
-    <button type="submit">Login</button>
-</form>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </form>
+        </div>
+    </div>
+</div>

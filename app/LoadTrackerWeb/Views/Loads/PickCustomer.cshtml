@@ -3,18 +3,30 @@
     ViewData["Title"] = "Select Customer";
 }
 
-<h2>Select Customer</h2>
+<div class="auth-page">
+    <div class="auth-card card">
+        <div class="card-header p-3">
+            <h4 class="auth-title">Select Customer</h4>
+            <p class="auth-subtitle">Choose a customer to view the live sheet</p>
+        </div>
 
-<form method="post">
-    @Html.AntiForgeryToken()
+        <div class="card-body p-4">
+            <form method="post" class="d-grid gap-3">
+                @Html.AntiForgeryToken()
 
-    <select name="SelectedCustomerCode">
-        <option value="">-- Select --</option>
-        @foreach (var c in Model.Customers)
-        {
-            <option value="@c.CustomerCode">@c.CustomerCode - @c.CallName</option>
-        }
-    </select>
+                <div>
+                    <label class="form-label">Customer</label>
+                    <select name="SelectedCustomerCode" class="form-select">
+                        <option value="">-- Select --</option>
+                        @foreach (var c in Model.Customers)
+                        {
+                            <option value="@c.CustomerCode">@c.CustomerCode - @c.CallName</option>
+                        }
+                    </select>
+                </div>
 
-    <button type="submit">Continue</button>
-</form>
+                <button type="submit" class="btn btn-primary w-100">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
