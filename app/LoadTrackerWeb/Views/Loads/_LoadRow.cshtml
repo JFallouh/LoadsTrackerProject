@@ -1,3 +1,4 @@
+@* File: Views/Loads/_LoadRow.cshtml *@
 @model LoadTrackerWeb.Models.LoadRowViewModel
 @{
     bool canEdit = (ViewData["CanEdit"] as bool?) == true;
@@ -58,7 +59,7 @@
 
     @if (canEdit)
     {
-        <td>
+        <td class="save-col">
             <button type="button" class="save">Save</button>
         </td>
     }

@@ -8,9 +8,32 @@
   const month = parseInt(table.dataset.month, 10);
   const canEdit = table.dataset.canedit === "1";
 
-  // ---------- Column toggles (view only, per-user browser localStorage) ----------
-  const colVisibilityKey = "lt_columns";
+  // ---------- Column toggles (per-user browser localStorage) ----------
+  const colToggleKey = "lt_columns";
   const toggles = document.querySelectorAll(".column-toggles input[type=checkbox]");
+
+  // These define your two header groups (must match your columns)
+  const leftGroupCols = ["probill","bol","order","po","receiver","rcity","rprov","pickup","rad","status"];
+  const rightGroupCols = ["ddate","dtime","exception","ontime","delay","comments"];
+
+  function updateGroupColspans(state) {
+    const leftTh = table.querySelector("thead .group-left");
+    const rightTh = table.querySelector("thead .group-right");
+    if (!leftTh || !rightTh) return;
+
+    const visible = (c) => state[c] !== false;
+
+    const leftCount = leftGroupCols.filter(visible).length;
+    const rightCount = rightGroupCols.filter(visible).length;
+
+    // If save column exists, it belongs to the right group visually
+    const hasSave = !!table.querySelector("thead th.save-col, thead th:last-child.save-col") ||
+                    !!table.querySelector("thead tr.col-row th.save-col") ||
+                    !!table.querySelector("thead tr.col-row th:last-child:not([data-col])");
+
+    leftTh.colSpan = Math.max(1, leftCount);
+    rightTh.colSpan = Math.max(1, rightCount + (hasSave ? 1 : 0));
+  }
 
   function applyColumnVisibility(state) {
     toggles.forEach(cb => {
@@ -18,117 +41,90 @@
       const show = state[col] !== false; // default true
       cb.checked = show;
 
-      // hide/show header + cells (only elements that have data-col)
       document.querySelectorAll(`[data-col="${col}"]`).forEach(el => {
         el.style.display = show ? "" : "none";
       });
     });
+
+    updateGroupColspans(state);
   }
 
   let colState = {};
-  try { colState = JSON.parse(localStorage.getItem(colVisibilityKey) || "{}"); } catch { colState = {}; }
+  try { colState = JSON.parse(localStorage.getItem(colToggleKey) || "{}"); } catch { colState = {}; }
   applyColumnVisibility(colState);
 
   toggles.forEach(cb => {
     cb.addEventListener("change", () => {
       colState[cb.dataset.col] = cb.checked;
-      localStorage.setItem(colVisibilityKey, JSON.stringify(colState));
+      localStorage.setItem(colToggleKey, JSON.stringify(colState));
       applyColumnVisibility(colState);
     });
   });
 
-  // ---------- Column resizing (Excel-like) ----------
-  const colWidthKey = "lt_colwidths";
+  // ---------- Column widths (resizable, stored in localStorage) ----------
+  const widthKey = "lt_colwidths";
+  let widths = {};
+  try { widths = JSON.parse(localStorage.getItem(widthKey) || "{}"); } catch { widths = {}; }
 
-  function setColumnWidth(col, px) {
-    const w = Math.max(40, px | 0);
-    // Apply width to header + all data cells for that column
-    document.querySelectorAll(`th[data-col="${col}"], td[data-col="${col}"]`).forEach(el => {
-      el.style.width = w + "px";
-      el.style.maxWidth = w + "px";
+  function applyWidth(col, px) {
+    // Apply to ALL header+cells that share data-col
+    document.querySelectorAll(`[data-col="${col}"]`).forEach(el => {
+      el.style.width = px + "px";
+      el.style.maxWidth = px + "px";
     });
   }
 
-  function loadColumnWidths() {
-    let widths = {};
-    try { widths = JSON.parse(localStorage.getItem(colWidthKey) || "{}"); } catch { widths = {}; }
-    Object.keys(widths).forEach(col => setColumnWidth(col, widths[col]));
-    return widths;
-  }
+  // Apply saved widths
+  Object.keys(widths).forEach(col => {
+    const px = parseInt(widths[col], 10);
+    if (px > 20) applyWidth(col, px);
+  });
 
-  let colWidths = loadColumnWidths();
+  // Attach drag handlers to resizers
+  table.querySelectorAll("thead tr.col-row th[data-col]").forEach(th => {
+    const col = th.dataset.col;
+    const handle = th.querySelector(".col-resizer");
+    if (!handle) return;
 
-  function saveColumnWidths() {
-    localStorage.setItem(colWidthKey, JSON.stringify(colWidths));
-  }
+    handle.addEventListener("mousedown", (e) => {
+      e.preventDefault();
 
-  function initResizers() {
-    // Only put resizers on the real header row (col-row)
-    const headers = table.querySelectorAll("thead tr.col-row th[data-col]");
-    headers.forEach(th => {
-      // Avoid adding twice
-      if (th.querySelector(".col-resizer")) return;
+      const startX = e.clientX;
+      const startWidth = th.getBoundingClientRect().width;
 
-      // Make sure TH can contain an absolute handle
-      // position: sticky is already set in CSS; sticky is a positioned element, OK for absolute children.
-      const handle = document.createElement("div");
-      handle.className = "col-resizer";
-      th.appendChild(handle);
+      function onMove(ev) {
+        const dx = ev.clientX - startX;
+        const newW = Math.max(40, Math.round(startWidth + dx));
+        applyWidth(col, newW);
+      }
 
-      handle.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
+      function onUp(ev) {
+        const finalW = Math.round(th.getBoundingClientRect().width);
+        widths[col] = finalW;
+        localStorage.setItem(widthKey, JSON.stringify(widths));
 
-        const col = th.dataset.col;
-        const startX = e.clientX;
-        const startWidth = th.getBoundingClientRect().width;
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mouseup", onUp);
+      }
 
-        function onMove(ev) {
-          const delta = ev.clientX - startX;
-          const newW = startWidth + delta;
-          setColumnWidth(col, newW);
-          colWidths[col] = Math.max(40, newW | 0);
-        }
-
-        function onUp() {
-          document.removeEventListener("mousemove", onMove);
-          document.removeEventListener("mouseup", onUp);
-          saveColumnWidths();
-        }
-
-        document.addEventListener("mousemove", onMove);
-        document.addEventListener("mouseup", onUp);
-      });
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("mouseup", onUp);
     });
-  }
+  });
 
-  initResizers();
-
-  // ---------- Safe row update (ONLY if server authorizes) ----------
-  function bindSaveButtons(root) {
+  // ---------- Safe row update ----------
+  async function wireSaveButtons(root) {
     if (!canEdit) return;
 
-    const scope = root || table;
-    scope.querySelectorAll("button.save").forEach(btn => {
-      // Avoid double-binding if you call this again
-      if (btn.dataset.bound === "1") return;
-      btn.dataset.bound = "1";
-
+    root.querySelectorAll("button.save").forEach(btn => {
       btn.addEventListener("click", async () => {
         const tr = btn.closest("tr");
         const id = parseInt(tr.dataset.rowid, 10);
 
-        const exEl = tr.querySelector("input.ex");
-        const ex = exEl ? exEl.checked : false;
+        const ex = tr.querySelector("input.ex")?.checked === true;
+        const delay = tr.querySelector("textarea.delay")?.value ?? "";
+        const comments = tr.querySelector("textarea.comments")?.value ?? "";
 
-        // Works for textarea (new) or input (old)
-        const delayEl = tr.querySelector("textarea.delay") || tr.querySelector("input.delay");
-        const commentsEl = tr.querySelector("textarea.comments") || tr.querySelector("input.comments");
-
-        const delay = delayEl ? delayEl.value : "";
-        const comments = commentsEl ? commentsEl.value : "";
-
-        // Anti-forgery token is in a hidden input generated by Razor for the page.
         const token = document.querySelector('input[name="__RequestVerificationToken"]');
         const headers = { "Content-Type": "application/json" };
         if (token) headers["RequestVerificationToken"] = token.value;
@@ -146,14 +142,12 @@
           })
         });
 
-        if (!res.ok) {
-          alert("Update failed.");
-        }
+        if (!res.ok) alert("Update failed.");
       });
     });
   }
 
-  bindSaveButtons(table);
+  wireSaveButtons(document);
 
   // ---------- SignalR live refresh ----------
   const yyyymm = `${year}${String(month).padStart(2, "0")}`;
@@ -178,9 +172,10 @@
 
       old.replaceWith(newRow);
 
-      // Re-apply visibility & re-bind save button for the new row
+      // Re-apply state after replace
       applyColumnVisibility(colState);
-      bindSaveButtons(newRow);
+      Object.keys(widths).forEach(c => applyWidth(c, widths[c]));
+      wireSaveButtons(document);
     });
 
     connection.start()

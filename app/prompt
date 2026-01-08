@@ -1,0 +1,156 @@
+ok now let start building the app so I mention before use the previous project to help build the active directory authentication and then for cutomer use this database [LoadTrackerAuthDB] so what I am trying to build is like a live excel sheets where everything from the LoadTrackerDB which is the ( 
+USE [LoadTrackerDB]
+GO
+
+/****** Object:  Table [dbo].[LoadTracker]    Script Date: 1/7/2026 12:44:23 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[LoadTracker](
+	[DETAIL_LINE_ID] [int] NOT NULL,
+	[BILL_NUMBER] [varchar](20) NULL,
+	[BOL #] [varchar](40) NULL,
+	[ORDER #] [varchar](40) NULL,
+	[DESTINATION] [varchar](10) NULL,
+	[DESTNAME] [varchar](40) NULL,
+	[DESTCITY] [varchar](30) NULL,
+	[DESTPROV] [varchar](4) NULL,
+	[CUSTOMER] [varchar](10) NULL,
+	[CALLNAME] [varchar](40) NULL,
+	[ORIGIN] [varchar](10) NULL,
+	[ORIGNAME] [varchar](40) NULL,
+	[ORIGCITY] [varchar](30) NULL,
+	[ORIGPROV] [varchar](4) NULL,
+	[PICK_UP_BY] [datetime] NULL,
+	[PICK_UP_BY_END] [datetime] NULL,
+	[DELIVER_BY] [datetime] NULL,
+	[DELIVER_BY_END] [datetime] NULL,
+	[CURRENT_STATUS] [varchar](10) NULL,
+	[PALLETS] [float] NULL,
+	[CUBE] [float] NULL,
+	[WEIGHT] [float] NULL,
+	[CUBE_UNITS] [varchar](3) NULL,
+	[WEIGHT_UNITS] [varchar](3) NULL,
+	[TEMPERATURE] [float] NULL,
+	[TEMPERATURE_UNITS] [varchar](5) NULL,
+	[DANGEROUS_GOODS] [char](5) NULL,
+	[REQUESTED_EQUIPMEN] [varchar](20) NULL,
+	[ACTUAL_DELIVERY] [datetime] NULL,
+	[COMMENTS] [varchar](300) NULL,
+	[SF_SHORT_DESC] [varchar](2000) NULL,
+	[USR_SF_SHORT_DESC] [varchar](255) NULL,
+	[PO #] [varchar](40) NULL,
+	[ACTUAL_PICKUP] [datetime] NULL,
+	[EXCEPTION] [bit] NOT NULL,
+ CONSTRAINT [PK_LoadTracker] PRIMARY KEY CLUSTERED 
+(
+	[DETAIL_LINE_ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[LoadTracker] ADD  CONSTRAINT [DF_LoadTracker_EXCEPTION]  DEFAULT ((0)) FOR [EXCEPTION]
+GO
+
+)
+For the client authentation database 
+(
+USE [LoadTrackerAuthDB]
+GO
+
+/****** Object:  Table [dbo].[UserAuth]    Script Date: 1/7/2026 1:24:47 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UserAuth](
+	[UserId] [int] IDENTITY(1,1) NOT NULL,
+	[UserName] [nvarchar](100) NOT NULL,
+	[Password] [nvarchar](200) NOT NULL,
+	[CustomerCode] [varchar](10) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[LastLogOnUtc] [datetime2](0) NULL,
+	[CanDo] [tinyint] NOT NULL,
+ CONSTRAINT [PK_UserAuth] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
+ CONSTRAINT [UQ_UserAuth_UserName] UNIQUE NONCLUSTERED 
+(
+	[UserName] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[UserAuth] ADD  CONSTRAINT [DF_UserAuth_IsActive]  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dbo].[UserAuth] ADD  CONSTRAINT [DF_UserAuth_CanDo]  DEFAULT ((0)) FOR [CanDo]
+GO
+
+ALTER TABLE [dbo].[UserAuth]  WITH CHECK ADD  CONSTRAINT [CK_UserAuth_CanDo] CHECK  (([CanDo]=(1) OR [CanDo]=(0)))
+GO
+
+ALTER TABLE [dbo].[UserAuth] CHECK CONSTRAINT [CK_UserAuth_CanDo]
+GO
+
+ALTER TABLE [dbo].[UserAuth]  WITH CHECK ADD  CONSTRAINT [CK_UserAuth_Password_NotBlank] CHECK  ((len(ltrim(rtrim([Password])))>(0)))
+GO
+
+ALTER TABLE [dbo].[UserAuth] CHECK CONSTRAINT [CK_UserAuth_Password_NotBlank]
+GO
+
+
+
+)
+ but i don't want everything to appear so first the employee login they must select the the customer which is ( 
+[CUSTOMER]) to avoid any confusion the for the customer use the cusotmer id field to fitler so that the see only theirs I prefer putting each month together in one page (the user whether they are the customer or emloyee can export it to excel late but I want to control which colouns to export and if possible maybe we can defualt view where only certain column are appearing but the user customer or employee can add or remove colouns to the view only ( note the database should'nt be utltered because only for that user and I prefer the logic in the application don't modify the database ) next here are the colouns I want in the default I will discribe the template they want to export to understand how to desing the view 
+I have an excel sheet which they would like to see I will describe it to you
+I will descripe the excel sheet =A1:K3  are empty
+A4 B4 G4 H4 I4 J4 K4 are also empty
+so top of the application on the right there should table that twelve cell like 
+L1 in the excel and (1,1)in the table call it status  text
+M1 in the excel and (1,2) in the table order call it load count text
+N1 in the Excel and (1,3) in the table call it percent  ( text) 
+L2 in the excel and  (2,1) in the table order call it ON-TIME text
+M2 in the excel and (2,2)in the table  has this =(COUNTIF(N7:N600,"NO"))-(COUNTIF(O7:O599,"YES"))which means if the exception coloun is no and on time column if yes then count 
+N2 in the excel which is (2,3) in the table  =(2,2)/((SUM((1,2)+(2,2)+(3,2))) 
+Or (M2/((SUM(M2:M4))))
+L3 in the excel (3,1) in the table order it called Late-Carrier text 
+M3 in the excel which (3,2) it the table order is =(COUNTIF(N7:N600,"NO"))-(COUNTIF(O7:O599,"YES")) which means if the total count when (on time column value equal to no and  if non carrier has value)
+N3 in the excel (3,3) in the table order is =M3/((SUM(M2:M4)))
+L4 in the excel (4,1) in the table order is Late – Other text (string)
+M4 in the excel (=COUNTIF(O7:O599,"YES")) which means count the vlue in the non carrier delay when it has value
+N4 in the excel which is (4,3) in the table order has =M4/((SUM(M2:M4)))
+
+now next to table on the left of it enter this text TOTAL LOGISTICS GROUP OF COMPANIES it should take C4 to F4 if you imagine an excel sheet next let start with live excelsheet there will be 16 columns
+This title (DAILY- FREIGHT & TRANSPORTATION LOG) should be from A5 to I5 if you imagine an excel sheet and POD INFORMATION shoud be from J5 to P5 if you imagine an excel sheet 
+Next column [BILL_NUMBER]as PROBILL A6 if you imagine an excel sheet
+# [BOL #] as BOL #  B6 if you imagine an excel sheet
+Next column [ORDER #] as ORDER #  C6 if you imagine an excel sheet
+Next column [PO #] as PO # D6 if you imagine an excel sheet
+Next column “DESTNAME” as RECEIVER E6 if you imagine an excel sheet
+Next column “DESTCITY” as RECEIVER City F6 if you imagine an excel sheet
+Next column “DESTPROV” as RECEIVER PROV. G6 if you imagine an excel sheet
+Next column “ACTUAL_PICKUP” as PICK UP DATE H6 if you imagine an excel sheet
+Next column for both “DELIVER_BY”, “DELIVER_BY_END “so take date and time for both as range for example 01/01/2025 9:00pm – 02/01/2025 10:00pm or if it is same date then 01/01/2025 9:00-10:pm (or use what ever format you found user friendly)as RAD I6 if you imagine an excel sheet
+Next column “CURRENT_STATUS” as CURRENT STATUS (column color yellow) J6 if you imagine an excel sheet
+Next column  “ACTUAL_DELIVERY” as DELIVERY DATE K6 if you imagine an excel sheet
+Next column  “ACTUAL_DELIVERY” as DELIVERY TIME L6 if you imagine an excel sheet
+Next column is [EXCEPTION] as EXCEPTION entered by user if you imagine an excel sheet M6 if you imagine an excel sheet
+Next column is check whether ACTUAL_DELIVERY in the DELIVER_BY, DELIVER_BY_END range (Yes or no)as  ON TIME N6 if you imagine an excel sheet
+Next column should check  Delay [USR_SF_SHORT_DESC] if it is empty then take the value from [SF_SHORT_DESC] so basically when the user which enter something it should be stored in USR_SF_SHORT_DESC and it should appear other wise show SF_SHORT_DESC as Non-Carrier Delay O6 if you imagine an excel sheet
+Next column [COMMENTS]  as COMMENTS P6 if you imagine an excel sheet
+Now just like the old project I want only employee who belong the security group TlcCustServGrp to be able to edit and they should be able to edit only these coloumn “EXCEPTION Y/N” and Non-Carrier Delay and “COMMENTS”
+The application should look like an excel sheet 
+I want you to add as much description and comments in the code for me to understand 
+I think mvc controller with singalR should be used but I am not sure you can let me know 
+Generate the file structure 
+Also the app should be safe so no modification to anything should be made only those there coloun “EXCEPTION Y/N” and Non-Carrier Delay and “COMMENTS” and it should only read from active directory to authenticate but no modify anything 
+Make it very safe generate the file structre and the commands and code to use 
+ 
