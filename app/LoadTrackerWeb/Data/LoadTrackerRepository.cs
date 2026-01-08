@@ -1,3 +1,4 @@
+// File: Data/LoadTrackerRepository.cs
 using Dapper;
 using Microsoft.Data.SqlClient;
 using LoadTrackerWeb.Models;
@@ -42,11 +43,44 @@ ORDER BY [CALLNAME];
             new CommandDefinition(sql, new { CustomerCode = customerCode }, cancellationToken: ct));
     }
 
+    // Strongly typed row mapping for safer code (no dynamic null warnings)
+    private sealed class LoadRowRaw
+    {
+        public int DetailLineId { get; init; }
+        public string? Probill { get; init; }
+        public string? BolNo { get; init; }
+        public string? OrderNo { get; init; }
+        public string? PoNo { get; init; }
+        public string? Receiver { get; init; }
+        public string? ReceiverCity { get; init; }
+        public string? ReceiverProv { get; init; }
+
+        public DateTime? ActualPickup { get; init; }
+        public DateTime? PickupBy { get; init; }
+        public DateTime? PickupByEnd { get; init; }
+
+        public DateTime? DeliverBy { get; init; }
+        public DateTime? DeliverByEnd { get; init; }
+
+        public string? CurrentStatus { get; init; }
+        public DateTime? ActualDelivery { get; init; }
+
+        public bool Exception { get; init; }
+
+        public string? SfShortDesc { get; init; }
+        public string? UsrSfShortDesc { get; init; }
+        public string? Comments { get; init; }
+    }
+
     public async Task<List<LoadRowViewModel>> GetLoadsForMonthAsync(
         string customerCode, DateTime start, DateTime end, CancellationToken ct)
     {
-        // We filter by DELIVER_BY month window.
-        // If you want a different rule (pickup month etc.), change it here.
+        // FILTER RULE (your request):
+        // - If ACTUAL_PICKUP exists: include row when ACTUAL_PICKUP is within [start,end)
+        // - If ACTUAL_PICKUP is NULL: include row when PICK_UP_BY is within [start,end)
+        //
+        // Display rule:
+        // - Show pickup date as (ACTUAL_PICKUP ?? PICK_UP_BY) to avoid blank pickup date.
         const string sql = @"
 SELECT
     [DETAIL_LINE_ID] AS DetailLineId,
@@ -57,7 +91,11 @@ SELECT
     [DESTNAME]       AS Receiver,
     [DESTCITY]       AS ReceiverCity,
     [DESTPROV]       AS ReceiverProv,
+
     [ACTUAL_PICKUP]  AS ActualPickup,
+    [PICK_UP_BY]     AS PickupBy,
+    [PICK_UP_BY_END] AS PickupByEnd,
+
     [DELIVER_BY]     AS DeliverBy,
     [DELIVER_BY_END] AS DeliverByEnd,
     [CURRENT_STATUS] AS CurrentStatus,
@@ -68,42 +106,49 @@ SELECT
     [COMMENTS]       AS Comments
 FROM dbo.LoadTracker
 WHERE [CUSTOMER] = @CustomerCode
-  AND [DELIVER_BY] >= @StartUtcOrLocal
-  AND [DELIVER_BY] <  @EndUtcOrLocal
-ORDER BY [DELIVER_BY], [DETAIL_LINE_ID];
+  AND (
+        ([ACTUAL_PICKUP] >= @StartUtcOrLocal AND [ACTUAL_PICKUP] < @EndUtcOrLocal)
+     OR ([ACTUAL_PICKUP] IS NULL AND [PICK_UP_BY] >= @StartUtcOrLocal AND [PICK_UP_BY] < @EndUtcOrLocal)
+  )
+ORDER BY
+    COALESCE([ACTUAL_PICKUP], [PICK_UP_BY]),
+    [DETAIL_LINE_ID];
 ";
 
         await using var con = OpenLoadTracker();
 
-        var rows = await con.QueryAsync(
-            new CommandDefinition(sql,
-                new { CustomerCode = customerCode, StartUtcOrLocal = start, EndUtcOrLocal = end },
+        var rows = await con.QueryAsync<LoadRowRaw>(
+            new CommandDefinition(
+                sql,
+                new
+                {
+                    CustomerCode = customerCode,
+                    StartUtcOrLocal = start,
+                    EndUtcOrLocal = end
+                },
                 cancellationToken: ct));
 
-        // Build view models + computed columns safely in code
         var list = new List<LoadRowViewModel>();
 
         foreach (var r in rows)
         {
-            // Dapper returned a dynamic row
-            int id = r.DetailLineId;
-            DateTime? deliverBy = r.DeliverBy;
-            DateTime? deliverByEnd = r.DeliverByEnd;
-            DateTime? actualDelivery = r.ActualDelivery;
-
-            string radText = BuildRadText(deliverBy, deliverByEnd);
-            string onTime = ComputeOnTime(actualDelivery, deliverBy, deliverByEnd);
+            // Keep RAD based on Deliver window (as your UI currently does)
+            string radText = BuildRadText(r.DeliverBy, r.DeliverByEnd);
+            string onTime = ComputeOnTime(r.ActualDelivery, r.DeliverBy, r.DeliverByEnd);
 
             string? usrDelay = r.UsrSfShortDesc;
             string? sfDelay = r.SfShortDesc;
             string? effectiveDelay = !string.IsNullOrWhiteSpace(usrDelay) ? usrDelay : sfDelay;
 
-            string? deliveryDateText = actualDelivery?.ToString("yyyy-MM-dd");
-            string? deliveryTimeText = actualDelivery?.ToString("HH:mm");
+            string? deliveryDateText = r.ActualDelivery?.ToString("yyyy-MM-dd");
+            string? deliveryTimeText = r.ActualDelivery?.ToString("HH:mm");
+
+            // Show ACTUAL_PICKUP if present, otherwise show PICK_UP_BY
+            DateTime? pickupForDisplay = r.ActualPickup ?? r.PickupBy;
 
             list.Add(new LoadRowViewModel
             {
-                DetailLineId = id,
+                DetailLineId = r.DetailLineId,
                 Probill = r.Probill,
                 BolNo = r.BolNo,
                 OrderNo = r.OrderNo,
@@ -111,12 +156,14 @@ ORDER BY [DELIVER_BY], [DETAIL_LINE_ID];
                 Receiver = r.Receiver,
                 ReceiverCity = r.ReceiverCity,
                 ReceiverProv = r.ReceiverProv,
-                ActualPickup = r.ActualPickup,
-                DeliverBy = deliverBy,
-                DeliverByEnd = deliverByEnd,
+
+                ActualPickup = pickupForDisplay,
+
+                DeliverBy = r.DeliverBy,
+                DeliverByEnd = r.DeliverByEnd,
                 RadText = radText,
                 CurrentStatus = r.CurrentStatus,
-                ActualDelivery = actualDelivery,
+                ActualDelivery = r.ActualDelivery,
                 DeliveryDateText = deliveryDateText,
                 DeliveryTimeText = deliveryTimeText,
                 Exception = r.Exception,
@@ -152,12 +199,12 @@ WHERE [DETAIL_LINE_ID] = @DetailLineId
   AND [CUSTOMER] = @CustomerCode;
 ";
 
-        // Small normalization to avoid crazy whitespace
         userDelay = string.IsNullOrWhiteSpace(userDelay) ? null : userDelay.Trim();
         comments = string.IsNullOrWhiteSpace(comments) ? null : comments.Trim();
 
         await using var con = OpenLoadTracker();
-        int affected = await con.ExecuteAsync(new CommandDefinition(sql,
+        int affected = await con.ExecuteAsync(new CommandDefinition(
+            sql,
             new
             {
                 Exception = exception,
@@ -177,34 +224,26 @@ WHERE [DETAIL_LINE_ID] = @DetailLineId
 
         if (start is not null && end is not null)
         {
-            // Same day => "YYYY-MM-DD HH:mm–HH:mm"
             if (start.Value.Date == end.Value.Date)
                 return $"{start:yyyy-MM-dd HH:mm}–{end:HH:mm}";
 
-            // Different day => "YYYY-MM-DD HH:mm – YYYY-MM-dd HH:mm"
             return $"{start:yyyy-MM-dd HH:mm} – {end:yyyy-MM-dd HH:mm}";
         }
 
-        // Only one side exists
-        return start is not null ? start.Value.ToString("yyyy-MM-dd HH:mm") : end!.Value.ToString("yyyy-MM-dd HH:mm");
+        return start is not null
+            ? start.Value.ToString("yyyy-MM-dd HH:mm")
+            : end!.Value.ToString("yyyy-MM-dd HH:mm");
     }
 
     private static string ComputeOnTime(DateTime? actual, DateTime? windowStart, DateTime? windowEnd)
     {
-        // If no actual delivery, show blank (not "NO")
         if (actual is null) return "";
 
-        // If range exists, check within range
         if (windowStart is not null && windowEnd is not null)
-        {
             return (actual.Value >= windowStart.Value && actual.Value <= windowEnd.Value) ? "YES" : "NO";
-        }
 
-        // If only DeliverBy exists, check <= DeliverBy
         if (windowStart is not null && windowEnd is null)
-        {
             return (actual.Value <= windowStart.Value) ? "YES" : "NO";
-        }
 
         return "";
     }
