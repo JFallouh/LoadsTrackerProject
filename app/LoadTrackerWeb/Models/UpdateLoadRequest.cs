@@ -14,4 +14,8 @@ public sealed class UpdateLoadRequest
     public string? UserNonCarrierDelay { get; set; }
 
     public string? Comments { get; set; }
+
+    // Month currently being viewed (for correct SignalR group notify)
+    public int? Year { get; set; }
+    public int? Month { get; set; }
 }

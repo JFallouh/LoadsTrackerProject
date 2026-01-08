@@ -70,9 +70,7 @@ C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\De
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\scopedcss\bundle\LoadTrackerWeb.styles.css
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\scopedcss\projectbundle\LoadTrackerWeb.bundle.scp.css
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\6eotcu2toj-{0}-b9sayid5wm-b9sayid5wm.gz
-C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\nayw194psf-{0}-wnx947dxyw-wnx947dxyw.gz
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\e5wy1ozcnz-{0}-61n19gt1b8-61n19gt1b8.gz
-C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\4tt8reicvo-{0}-p18edzypum-p18edzypum.gz
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\ainwsqcoog-{0}-bqjiyaj88i-bqjiyaj88i.gz
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\1olz35naeh-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\g3gl4d7p0y-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -145,3 +143,5 @@ C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\De
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\LoadTrackerWeb.pdb
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\LoadTrackerWeb.genruntimeconfig.cache
 C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\ref\LoadTrackerWeb.dll
+C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\nayw194psf-{0}-ufrtuj3zn5-ufrtuj3zn5.gz
+C:\Users\jfallouh\Documents\GitHub\LoadsTrackerProject\app\LoadTrackerWeb\obj\Debug\net10.0\compressed\4tt8reicvo-{0}-710ozxstyr-710ozxstyr.gz

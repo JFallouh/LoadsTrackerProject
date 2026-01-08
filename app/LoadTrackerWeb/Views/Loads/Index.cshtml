@@ -1,7 +1,18 @@
+@* File: Views/Loads/Index.cshtml *@
 @model LoadTrackerWeb.Models.LoadsPageViewModel
 @{
     ViewData["Title"] = "Load Tracker";
     ViewData["CanEdit"] = Model.CanEdit && Model.IsEmployee;
+
+    var monthName = new DateTime(Model.Year, Model.Month, 1).ToString("MMMM yyyy");
+
+    bool showSave = Model.CanEdit && Model.IsEmployee;
+
+    // Column grouping:
+    // DAILY LOG = first 10 columns (up to CURRENT STATUS)
+    // POD INFO  = remaining columns (delivery/pod/editable fields)
+    int dailyCols = 10;
+    int podCols = showSave ? 7 : 6;
 }
 
 <div class="topbar">
@@ -20,10 +31,37 @@
     </div>
 </div>
 
-<div class="sheet-header">
-    <div class="sheet-title-left">DAILY- FREIGHT &amp; TRANSPORTATION LOG</div>
-    <div class="sheet-title-right">POD INFORMATION</div>
-</div>
+<form method="get" asp-controller="Loads" asp-action="Index" class="month-picker">
+    <label>Month:</label>
+
+    <select name="year">
+        @for (var y = DateTime.Now.Year - 2; y <= DateTime.Now.Year + 1; y++)
+        {
+            <option value="@y" selected="@(y == Model.Year ? "selected" : null)">@y</option>
+        }
+    </select>
+
+    <select name="month">
+        @for (var m = 1; m <= 12; m++)
+        {
+            <option value="@m" selected="@(m == Model.Month ? "selected" : null)">
+                @(new DateTime(2000, m, 1).ToString("MMM"))
+            </option>
+        }
+    </select>
+
+    <button type="submit">Go</button>
+
+    @if (Model.IsEmployee)
+    {
+        <a style="margin-left:10px;" asp-controller="Loads" asp-action="PickCustomer">Change customer</a>
+    }
+</form>
+
+@if (Model.Rows == null || Model.Rows.Count == 0)
+{
+    <div class="no-records">No records for <b>@monthName</b>.</div>
+}
 
 <div class="column-toggles">
     <span>Columns (view only):</span>
@@ -50,42 +88,58 @@
     @Html.AntiForgeryToken()
 </form>
 
-<table class="sheet" id="loadsTable"
-       data-customer="@Model.CustomerCode"
-       data-year="@Model.Year"
-       data-month="@Model.Month"
-       data-canedit="@(Model.CanEdit && Model.IsEmployee ? "1" : "0")">
-    <thead>
-        <tr>
-            <th data-col="probill">PROBILL</th>
-            <th data-col="bol">BOL #</th>
-            <th data-col="order">ORDER #</th>
-            <th data-col="po">PO #</th>
-            <th data-col="receiver">RECEIVER</th>
-            <th data-col="rcity">RECEIVER City</th>
-            <th data-col="rprov">RECEIVER PROV.</th>
-            <th data-col="pickup">PICK UP DATE</th>
-            <th data-col="rad">RAD</th>
-            <th data-col="status" class="yellow">CURRENT STATUS</th>
-            <th data-col="ddate">DELIVERY DATE</th>
-            <th data-col="dtime">DELIVERY TIME</th>
-            <th data-col="exception">EXCEPTION</th>
-            <th data-col="ontime">ON TIME</th>
-            <th data-col="delay">Non-Carrier Delay</th>
-            <th data-col="comments">COMMENTS</th>
-            @if (Model.CanEdit && Model.IsEmployee)
+<div class="sheet-wrap">
+    <table class="sheet" id="loadsTable"
+           data-customer="@Model.CustomerCode"
+           data-year="@Model.Year"
+           data-month="@Model.Month"
+           data-canedit="@(showSave ? "1" : "0")">
+
+        <thead>
+            <!-- Group header row INSIDE the table = always aligned when scrolling -->
+            <tr class="group-row">
+                <th colspan="@dailyCols" class="group-left">DAILY- FREIGHT &amp; TRANSPORTATION LOG</th>
+                <th colspan="@podCols" class="group-right">POD INFORMATION</th>
+            </tr>
+
+            <!-- Real column headers -->
+            <tr class="col-row">
+                <th data-col="probill">PROBILL</th>
+                <th data-col="bol">BOL #</th>
+                <th data-col="order">ORDER #</th>
+                <th data-col="po">PO #</th>
+                <th data-col="receiver">RECEIVER</th>
+                <th data-col="rcity">RECEIVER City</th>
+                <th data-col="rprov">RECEIVER PROV.</th>
+                <th data-col="pickup">PICK UP DATE</th>
+                <th data-col="rad">RAD</th>
+                <th data-col="status" class="yellow">CURRENT STATUS</th>
+
+                <th data-col="ddate">DELIVERY DATE</th>
+                <th data-col="dtime">DELIVERY TIME</th>
+                <th data-col="exception">EXCEPTION</th>
+                <th data-col="ontime">ON TIME</th>
+                <th data-col="delay">Non-Carrier Delay</th>
+                <th data-col="comments">COMMENTS</th>
+
+                @if (showSave)
+                {
+                    <th>Save</th>
+                }
+            </tr>
+        </thead>
+
+        <tbody>
+            @if (Model.Rows != null)
             {
-                <th>Save</th>
+                foreach (var r in Model.Rows)
+                {
+                    <partial name="_LoadRow" model="r" />
+                }
             }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var r in Model.Rows)
-        {
-            <partial name="_LoadRow" model="r" />
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 <form method="post" asp-controller="Account" asp-action="Logout">
     @Html.AntiForgeryToken()

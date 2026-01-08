@@ -34,10 +34,10 @@
 
     <td data-col="ontime">@Model.OnTimeText</td>
 
-    <td data-col="delay">
+    <td data-col="delay" class="wrap">
         @if (canEdit)
         {
-            <input class="delay" value="@Model.UserNonCarrierDelay" maxlength="255" />
+            <textarea class="delay" maxlength="255">@Model.UserNonCarrierDelay</textarea>
         }
         else
         {
@@ -45,10 +45,10 @@
         }
     </td>
 
-    <td data-col="comments">
+    <td data-col="comments" class="wrap">
         @if (canEdit)
         {
-            <input class="comments" value="@Model.Comments" maxlength="300" />
+            <textarea class="comments" maxlength="300">@Model.Comments</textarea>
         }
         else
         {

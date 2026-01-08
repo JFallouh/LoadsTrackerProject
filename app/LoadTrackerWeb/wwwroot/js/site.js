@@ -1,9 +1,4 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
-
-// Write your JavaScript code.
-
-
+﻿// File: wwwroot/js/loadtracker.js
 (function () {
   const table = document.getElementById("loadsTable");
   if (!table) return;
@@ -14,7 +9,7 @@
   const canEdit = table.dataset.canedit === "1";
 
   // ---------- Column toggles (view only, per-user browser localStorage) ----------
-  const storageKey = "lt_columns";
+  const colVisibilityKey = "lt_columns";
   const toggles = document.querySelectorAll(".column-toggles input[type=checkbox]");
 
   function applyColumnVisibility(state) {
@@ -23,7 +18,7 @@
       const show = state[col] !== false; // default true
       cb.checked = show;
 
-      // hide/show header + cells
+      // hide/show header + cells (only elements that have data-col)
       document.querySelectorAll(`[data-col="${col}"]`).forEach(el => {
         el.style.display = show ? "" : "none";
       });
@@ -31,27 +26,107 @@
   }
 
   let colState = {};
-  try { colState = JSON.parse(localStorage.getItem(storageKey) || "{}"); } catch { colState = {}; }
+  try { colState = JSON.parse(localStorage.getItem(colVisibilityKey) || "{}"); } catch { colState = {}; }
   applyColumnVisibility(colState);
 
   toggles.forEach(cb => {
     cb.addEventListener("change", () => {
       colState[cb.dataset.col] = cb.checked;
-      localStorage.setItem(storageKey, JSON.stringify(colState));
+      localStorage.setItem(colVisibilityKey, JSON.stringify(colState));
       applyColumnVisibility(colState);
     });
   });
 
+  // ---------- Column resizing (Excel-like) ----------
+  const colWidthKey = "lt_colwidths";
+
+  function setColumnWidth(col, px) {
+    const w = Math.max(40, px | 0);
+    // Apply width to header + all data cells for that column
+    document.querySelectorAll(`th[data-col="${col}"], td[data-col="${col}"]`).forEach(el => {
+      el.style.width = w + "px";
+      el.style.maxWidth = w + "px";
+    });
+  }
+
+  function loadColumnWidths() {
+    let widths = {};
+    try { widths = JSON.parse(localStorage.getItem(colWidthKey) || "{}"); } catch { widths = {}; }
+    Object.keys(widths).forEach(col => setColumnWidth(col, widths[col]));
+    return widths;
+  }
+
+  let colWidths = loadColumnWidths();
+
+  function saveColumnWidths() {
+    localStorage.setItem(colWidthKey, JSON.stringify(colWidths));
+  }
+
+  function initResizers() {
+    // Only put resizers on the real header row (col-row)
+    const headers = table.querySelectorAll("thead tr.col-row th[data-col]");
+    headers.forEach(th => {
+      // Avoid adding twice
+      if (th.querySelector(".col-resizer")) return;
+
+      // Make sure TH can contain an absolute handle
+      // position: sticky is already set in CSS; sticky is a positioned element, OK for absolute children.
+      const handle = document.createElement("div");
+      handle.className = "col-resizer";
+      th.appendChild(handle);
+
+      handle.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const col = th.dataset.col;
+        const startX = e.clientX;
+        const startWidth = th.getBoundingClientRect().width;
+
+        function onMove(ev) {
+          const delta = ev.clientX - startX;
+          const newW = startWidth + delta;
+          setColumnWidth(col, newW);
+          colWidths[col] = Math.max(40, newW | 0);
+        }
+
+        function onUp() {
+          document.removeEventListener("mousemove", onMove);
+          document.removeEventListener("mouseup", onUp);
+          saveColumnWidths();
+        }
+
+        document.addEventListener("mousemove", onMove);
+        document.addEventListener("mouseup", onUp);
+      });
+    });
+  }
+
+  initResizers();
+
   // ---------- Safe row update (ONLY if server authorizes) ----------
-  if (canEdit) {
-    table.querySelectorAll("button.save").forEach(btn => {
+  function bindSaveButtons(root) {
+    if (!canEdit) return;
+
+    const scope = root || table;
+    scope.querySelectorAll("button.save").forEach(btn => {
+      // Avoid double-binding if you call this again
+      if (btn.dataset.bound === "1") return;
+      btn.dataset.bound = "1";
+
       btn.addEventListener("click", async () => {
         const tr = btn.closest("tr");
         const id = parseInt(tr.dataset.rowid, 10);
 
-        const ex = tr.querySelector("input.ex").checked;
-        const delay = tr.querySelector("input.delay").value;
-        const comments = tr.querySelector("input.comments").value;
+        const exEl = tr.querySelector("input.ex");
+        const ex = exEl ? exEl.checked : false;
+
+        // Works for textarea (new) or input (old)
+        const delayEl = tr.querySelector("textarea.delay") || tr.querySelector("input.delay");
+        const commentsEl = tr.querySelector("textarea.comments") || tr.querySelector("input.comments");
+
+        const delay = delayEl ? delayEl.value : "";
+        const comments = commentsEl ? commentsEl.value : "";
 
         // Anti-forgery token is in a hidden input generated by Razor for the page.
         const token = document.querySelector('input[name="__RequestVerificationToken"]');
@@ -65,7 +140,9 @@
             detailLineId: id,
             exception: ex,
             userNonCarrierDelay: delay,
-            comments: comments
+            comments: comments,
+            year: year,
+            month: month
           })
         });
 
@@ -76,20 +153,17 @@
     });
   }
 
+  bindSaveButtons(table);
+
   // ---------- SignalR live refresh ----------
-  // NOTE: The browser automatically sends cookies to the hub.
-  // The hub validates the user can join only their allowed group.
   const yyyymm = `${year}${String(month).padStart(2, "0")}`;
 
-  // If you don't have signalr.min.js locally, install via LibMan or copy it.
-  // For now, this assumes it exists at /lib/signalr/signalr.min.js
   if (window.signalR) {
     const connection = new signalR.HubConnectionBuilder()
       .withUrl("./hubs/loadtracker")
       .build();
 
     connection.on("rowUpdated", async (detailLineId) => {
-      // Refresh just one row (partial view)
       const url = `./Loads/Row?id=${detailLineId}&year=${year}&month=${month}`;
       const html = await fetch(url).then(r => r.ok ? r.text() : null);
       if (!html) return;
@@ -104,8 +178,9 @@
 
       old.replaceWith(newRow);
 
-      // Re-apply column visibility after row replace
+      // Re-apply visibility & re-bind save button for the new row
       applyColumnVisibility(colState);
+      bindSaveButtons(newRow);
     });
 
     connection.start()

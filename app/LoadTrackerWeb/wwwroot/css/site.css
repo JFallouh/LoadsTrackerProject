@@ -7,18 +7,92 @@ body { font-family: Arial, sans-serif; font-size: 13px; }
 .status-box table { border-collapse: collapse; font-size: 12px; }
 .status-box th, .status-box td { border:1px solid #999; padding:4px 8px; }
 
-.sheet-header { display:flex; }
-.sheet-title-left { flex: 1; text-align:center; font-weight:bold; border:1px solid #999; padding:6px; }
-.sheet-title-right { width: 35%; text-align:center; font-weight:bold; border:1px solid #999; padding:6px; }
-
 .column-toggles { margin:10px 0; font-size:12px; }
 .column-toggles label { margin-right:10px; white-space:nowrap; }
 
-table.sheet { width:100%; border-collapse: collapse; table-layout: fixed; }
-table.sheet th, table.sheet td { border:1px solid #999; padding:4px; overflow:hidden; text-overflow: ellipsis; white-space: nowrap; }
-table.sheet th { background:#f3f3f3; position: sticky; top: 0; z-index: 2; }
+.month-picker { margin: 10px 0; font-size: 12px; }
+.month-picker select { margin-right: 6px; }
 
+.no-records {
+  margin: 10px 0;
+  padding: 8px;
+  border: 1px solid #999;
+  background: #f9f9f9;
+}
+
+/* Excel-like scroll area (left/right + up/down) */
+.sheet-wrap {
+  border: 1px solid #999;
+  overflow: auto;
+  max-height: 70vh; /* adjust if you want more/less vertical area */
+}
+
+/* Table */
+table.sheet {
+  border-collapse: collapse;
+  table-layout: fixed;
+  min-width: 100%;
+  width: max-content; /* allow horizontal scroll when content/widths exceed container */
+}
+
+table.sheet th, table.sheet td {
+  border: 1px solid #999;
+  padding: 4px;
+  overflow: hidden;
+  text-overflow: clip;  /* no "..." */
+  white-space: nowrap;  /* default compact */
+  vertical-align: top;
+}
+
+/* Group header row (titles) */
+table.sheet thead tr.group-row th {
+  background: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+/* Column header row (actual column names) */
+table.sheet thead tr.col-row th {
+  background: #f3f3f3;
+  position: sticky;
+  top: 26px; /* must match the approx height of group-row */
+  z-index: 3;
+  padding-right: 12px; /* room for resize handle */
+}
+
+/* Yellow status column */
 .yellow { background: #fff49a; }
 
-input.delay, input.comments { width: 98%; }
+/* Wrap long text columns (delay/comments) so full text shows */
+table.sheet td.wrap {
+  white-space: normal;
+  word-break: break-word;
+  overflow: visible;
+}
+
+/* Editable long-text fields */
+textarea.delay, textarea.comments {
+  width: 98%;
+  min-height: 2.4em;
+  resize: both;            /* user can resize manually */
+  font-family: inherit;
+  font-size: inherit;
+  white-space: pre-wrap;
+}
+
+/* Save button */
 button.save { padding: 2px 8px; }
+
+/* Column resize handle (added by JS to header cells) */
+.col-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 6px;
+  cursor: col-resize;
+  user-select: none;
+}

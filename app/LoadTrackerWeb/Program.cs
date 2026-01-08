@@ -1,3 +1,4 @@
+// File: Program.cs
 using Microsoft.AspNetCore.Authentication.Cookies;
 using LoadTrackerWeb.Data;
 using LoadTrackerWeb.Hubs;
